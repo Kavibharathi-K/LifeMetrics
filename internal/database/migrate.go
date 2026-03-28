@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -28,6 +29,8 @@ func RunMigrations(pool *pgxpool.Pool) error {
 	if err != nil {
 		return err
 	}
+
+	log.Println("Files", files)
 
 	sort.Strings(files)
 

@@ -1,0 +1,15 @@
+CREATE TABLE foods (
+    food_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+
+    measurement_type VARCHAR(20) NOT NULL,
+    base_quantity DECIMAL(10,2) NOT NULL,
+
+    calories DECIMAL(10,2) NOT NULL,
+    protein DECIMAL(10,2) NOT NULL,
+    carbs DECIMAL(10,2) NOT NULL,
+    fat DECIMAL(10,2) NOT NULL,
+    fiber DECIMAL(10,2) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
