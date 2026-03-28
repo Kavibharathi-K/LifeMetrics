@@ -1,9 +1,12 @@
-package calories
+package food
 
 import (
 	"context"
 	"encoding/json"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Handler struct {
@@ -12,6 +15,19 @@ type Handler struct {
 
 func NewHandler(repo *Repository) *Handler {
 	return &Handler{Repo: repo}
+}
+
+func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
+
+	repo := NewRepository(db)
+	handler := NewHandler(repo)
+
+	r.Route("/foods", func(r chi.Router) {
+
+		r.Post("/", handler.CreateFood)
+		r.Get("/", handler.ListFoods)
+
+	})
 }
 
 func (h *Handler) CreateFood(w http.ResponseWriter, r *http.Request) {

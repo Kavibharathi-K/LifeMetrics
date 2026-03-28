@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Kavibharathi-K/lifemetrics/internal/calories"
-	"github.com/Kavibharathi-K/lifemetrics/internal/database"
+	"github.com/Kavibharathi-K/lifemetrics/database"
+	"github.com/Kavibharathi-K/lifemetrics/services/food"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -21,15 +21,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo := calories.NewRepository(db)
-	handler := calories.NewHandler(repo)
-
 	r := chi.NewRouter()
 
-	r.Post("/foods", handler.CreateFood)
-	r.Get("/foods", handler.ListFoods)
-
+	food.RegisterRoutes(r, db)
+	
 	log.Println("🚀 Server running on :8080")
-
 	http.ListenAndServe(":8080", r)
 }

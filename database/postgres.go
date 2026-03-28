@@ -7,6 +7,14 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type Repository struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepository(db *pgxpool.Pool) *Repository {
+	return &Repository{DB: db}
+}
+
 func NewPostgresConnection() (*pgxpool.Pool, error) {
 
 	dsn := "postgres://postgres:pass1234@localhost:5432/lifemetrics"

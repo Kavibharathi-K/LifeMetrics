@@ -15,24 +15,35 @@ func RunMigrations(pool *pgxpool.Pool) error {
 
 	ctx := context.Background()
 
-	_, err := pool.Exec(ctx, `
-	CREATE TABLE IF NOT EXISTS schema_migrations (
-		version VARCHAR(255) PRIMARY KEY,
-		applied_at TIMESTAMP DEFAULT NOW()
-	);
-	`)
+	log.Println("Running TABLE migrations...")
+	//Table migrations
+	err := runFolderMigrations(ctx, pool, "migrations/tables")
 	if err != nil {
 		return err
 	}
 
-	files, err := filepath.Glob("migrations/*.sql")
+	log.Println("Running PROC migrations...")
+	//Proc migrations
+	err = runFolderMigrations(ctx, pool, "migrations/procs")
 	if err != nil {
 		return err
 	}
 
-	log.Println("Files", files)
+	log.Println("All migrations completed ✅")
+
+	return nil
+}
+
+func runFolderMigrations(ctx context.Context, pool *pgxpool.Pool, folder string) error {
+
+	files, err := filepath.Glob(filepath.Join(folder, "*.sql"))
+	if err != nil {
+		return err
+	}
 
 	sort.Strings(files)
+
+	log.Println("Found files in", folder, ":", files)
 
 	for _, file := range files {
 
@@ -42,7 +53,11 @@ func RunMigrations(pool *pgxpool.Pool) error {
 
 		err := pool.QueryRow(
 			ctx,
-			"SELECT EXISTS (SELECT 1 FROM schema_migrations WHERE version=$1)",
+			`SELECT EXISTS (
+				SELECT 1
+				FROM schema_migrations
+				WHERE version=$1
+			)`,
 			version,
 		).Scan(&exists)
 
@@ -59,6 +74,8 @@ func RunMigrations(pool *pgxpool.Pool) error {
 			return err
 		}
 
+		log.Println("Applying:", version)
+
 		_, err = pool.Exec(ctx, string(sqlBytes))
 		if err != nil {
 			return err
@@ -66,10 +83,10 @@ func RunMigrations(pool *pgxpool.Pool) error {
 
 		_, err = pool.Exec(
 			ctx,
-			"INSERT INTO schema_migrations (version) VALUES ($1)",
+			`INSERT INTO schema_migrations (version)
+			 VALUES ($1)`,
 			version,
 		)
-
 		if err != nil {
 			return err
 		}
