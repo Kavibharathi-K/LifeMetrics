@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Food</title>
+    <style>
+        body{
+            margin:0;
+            font-family: Arial;
+        }
+
+        h2{
+            margin:0 0 20px 0;
+        }
+
+        form{
+            max-width:400px;
+        }
+
+        label{
+            font-weight:bold;
+        }
+
+        input, select{
+            width:100%;
+            padding:6px;
+            margin-top:4px;
+            margin-bottom:12px;
+        }
+
+        button{
+            padding:8px 14px;
+            cursor:pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h2>Add Food</h2>
+
+<form id="foodForm">
+
+    <input type="hidden" id="food_id">
+
+    <label>Name:</label><br>
+    <input type="text" id="name"><br><br>
+
+    <label>Measurement Type:</label><br>
+    <select id="measurement_type">
+
+        <option value="gm">Gram</option>
+        <option value="ml">ML</option>
+        <option value="unit">Unit</option>
+
+    </select>
+    <br><br>
+
+    <label>Base Quantity:</label><br>
+    <input type="number" id="base_quantity"><br><br>
+
+    <label>Calories:</label><br>
+    <input type="number" id="calories"><br><br>
+
+    <label>Protein:</label><br>
+    <input type="number" id="protein"><br><br>
+
+    <label>Carbs:</label><br>
+    <input type="number" id="carbs"><br><br>
+
+    <label>Fat:</label><br>
+    <input type="number" id="fat"><br><br>
+
+    <label>Fiber:</label><br>
+    <input type="number" id="fiber"><br><br>
+
+    <button type="submit">
+        Save Food
+    </button>
+
+</form>
+
+<script src="food.js"></script>
+
+</body>
+
+</html>

@@ -43,8 +43,6 @@ func runFolderMigrations(ctx context.Context, pool *pgxpool.Pool, folder string)
 
 	sort.Strings(files)
 
-	log.Println("Found files in", folder, ":", files)
-
 	for _, file := range files {
 
 		version := filepath.Base(file)

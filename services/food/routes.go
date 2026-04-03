@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -24,8 +25,10 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 
 	r.Route("/foods", func(r chi.Router) {
 
-		r.Post("/", handler.CreateFood)
-		r.Get("/", handler.ListFoods)
+		r.Post("/addfood", handler.CreateFood)
+		r.Get("/listfoods", handler.ListFoods)
+		r.Get("/getfood/{food_id}", handler.GetFoodByID)
+		r.Post("/updatefood/{food_id}", handler.UpdateFood)
 
 	})
 }
@@ -58,4 +61,49 @@ func (h *Handler) ListFoods(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(foods)
+}
+
+func (h *Handler) GetFoodByID(w http.ResponseWriter, r *http.Request) {
+
+	foodIDStr := chi.URLParam(r, "food_id")
+
+	foodID, err := strconv.Atoi(foodIDStr)
+	if err != nil {
+		http.Error(w, "invalid food_id", http.StatusBadRequest)
+		return
+	}
+
+	food, err := h.Repo.GetFoodByID(context.Background(), foodID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(food)
+}
+
+func (h *Handler) UpdateFood(w http.ResponseWriter, r *http.Request) {
+
+	foodIDstr := chi.URLParam(r, "food_id")
+
+	foodID, err := strconv.Atoi(foodIDstr)
+	if err != nil {
+		http.Error(w, "invalid food_id", http.StatusBadRequest)
+		return
+	}
+
+	var food Food
+	food.FoodID = foodID
+	err = json.NewDecoder(r.Body).Decode(&food)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = h.Repo.UpdateFood(context.Background(), foodID, &food)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(food)
 }

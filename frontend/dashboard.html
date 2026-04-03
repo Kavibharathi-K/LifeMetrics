@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>LifeMetrics Dashboard</title>
+
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+    body{
+            margin:0;
+            font-family: Arial;
+        }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+    <h2>LifeMetrics</h2>
+    <div class="menu">
+
+        <div class="menu-item" onclick="toggleMenu('caloriesMenu')"> Calories Tracker </div>
+
+        <div id="caloriesMenu" class="submenu">
+            <div class="submenu-item" onclick="loadPage('add-food')"> Add Food </div>
+            <div class="submenu-item" onclick="loadPage('food-list')"> Food List </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Main content -->
+    <div class="content">
+        <iframe id="contentFrame"></iframe>
+    </div>
+</div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>

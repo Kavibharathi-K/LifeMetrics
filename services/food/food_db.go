@@ -68,3 +68,52 @@ func (r *Repository) ListFoods(ctx context.Context) ([]Food, error) {
 
 	return foods, nil
 }
+
+func (r *Repository) GetFoodByID(ctx context.Context, foodID int,) (Food, error) {
+
+	query := `
+	SELECT * FROM get_food_by_id($1)
+	`
+	
+	var food Food
+
+	err := r.DB.QueryRow(
+		ctx,
+		query,
+		foodID,
+	).Scan(
+		&food.FoodID,
+		&food.Name,
+		&food.MeasurementType,
+		&food.BaseQuantity,
+		&food.Calories,
+		&food.Protein,
+		&food.Carbs,
+		&food.Fat,
+		&food.Fiber,
+		&food.CreatedAt,
+	)
+
+	return food, err
+}
+
+func (r *Repository) UpdateFood(ctx context.Context, foodID int, food *Food) error {
+	query := `
+	call update_food($1,$2,$3,$4,$5,$6,$7,$8,$9);
+	`
+
+	_, err := r.DB.Exec(
+		ctx, 
+		query,
+		foodID,
+		food.Name,
+		food.MeasurementType,
+		food.BaseQuantity,
+		food.Calories,
+		food.Protein,
+		food.Carbs,
+		food.Fat,
+		food.Fiber,
+	)
+	return err
+}

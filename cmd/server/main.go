@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/Kavibharathi-K/lifemetrics/database"
 	"github.com/Kavibharathi-K/lifemetrics/services/food"
@@ -24,7 +26,20 @@ func main() {
 	r := chi.NewRouter()
 
 	food.RegisterRoutes(r, db)
-	
-	log.Println("🚀 Server running on :8080")
-	http.ListenAndServe(":8080", r)
+
+	log.Println("=======================")
+	log.Println("Life Metrics is running")
+	log.Println("=======================")
+
+	fs := http.FileServer(http.Dir("./frontend"))
+
+	r.Handle("/*", fs)
+
+	wd, _ := os.Getwd()
+	fmt.Println("Working dir:", wd)
+
+	err = http.ListenAndServe(":8080", r)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
