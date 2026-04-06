@@ -6,7 +6,9 @@ type MealItem struct {
 	MealItemID int `db:"meal_item_id" json:"meal_item_id"`
 
 	MealID int `db:"meal_id" json:"meal_id"`
+	MealType string `db:"meal_type" json:"meal_type"`
 	FoodID int `db:"food_id" json:"food_id"`
+	FoodName string `db:"food_name" json:"food_name"`
 
 	Quantity float64 `db:"quantity" json:"quantity"`
 
