@@ -8,6 +8,7 @@ import (
 
 	"github.com/Kavibharathi-K/lifemetrics/database"
 	"github.com/Kavibharathi-K/lifemetrics/services/food"
+	"github.com/Kavibharathi-K/lifemetrics/services/meal_item"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -26,14 +27,20 @@ func main() {
 	r := chi.NewRouter()
 
 	food.RegisterRoutes(r, db)
+	meal_item.RegisterRoutes(r, db)
 
 	log.Println("=======================")
 	log.Println("Life Metrics is running")
 	log.Println("=======================")
 
-	fs := http.FileServer(http.Dir("./frontend"))
+	// pages
+	r.Get("/", HomePage)
+	r.Get("/food", FoodPage)
+	r.Get("/meals", MealsPage)
 
-	r.Handle("/*", fs)
+	// static files
+	fs := http.FileServer(http.Dir("./assets/static"))
+	r.Handle("/static/*", http.StripPrefix("/static/", fs))
 
 	wd, _ := os.Getwd()
 	fmt.Println("Working dir:", wd)

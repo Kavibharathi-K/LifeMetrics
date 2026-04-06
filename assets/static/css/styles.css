@@ -1,0 +1,185 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f5f6f7;
+}
+
+
+/* HEADER */
+.top-header {
+    display: flex;
+    align-items: center;
+    background-color: #0d5aa7;
+    color: white;
+    padding: 0 40px;
+    height: 60px;
+}
+
+
+/* LOGO */
+.logo {
+    font-size: 26px;
+    font-weight: bold;
+    margin-right: 40px;
+}
+
+
+/* MENU */
+.top-menu {
+    display: flex;
+    gap: 25px;
+}
+
+.menu-item {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 20px 0;
+}
+
+
+/* ACTIVE PAGE */
+.menu-item.active {
+    border-bottom: 3px solid #ffd54f;
+}
+
+
+/* PAGE CONTENT */
+.page-container {
+    padding: 30px 40px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th {
+    background-color: #0d5aa7;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background-color: #f2f6fb;
+}
+
+.sub-menu {
+
+    background-color: #114a7a;
+
+    padding-left: 40px;
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+.sub-item {
+
+    color: white;
+
+    text-decoration: none;
+
+    margin-right: 25px;
+
+    font-weight: bold;
+
+}
+
+
+.sub-item.active {
+
+    border-bottom: 3px solid #ffd54f;
+
+    padding-bottom: 10px;
+
+}
+
+.meal-block {
+    margin-bottom: 25px;
+}
+
+.meal-block h2 {
+    margin-bottom: 5px;
+}
+
+.meal-block a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.meal-block a:hover {
+    text-decoration: underline;
+}
+
+button {
+    background-color: #1e5a8a;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #17486d;
+}
+
+
+/* modal background */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+
+/* modal box */
+.modal-content {
+    background-color: white;
+    width: 300px;
+    padding: 20px;
+    margin: 120px auto;
+    border-radius: 6px;
+}
+
+
+.modal-content input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 6px;
+}
+
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.success-msg {
+
+    color: green;
+
+    font-size: 14px;
+
+    margin-top: 10px;
+
+}

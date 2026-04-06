@@ -1,0 +1,65 @@
+{{define "layout"}}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body data-subpage="{{.SubPage}}">
+
+<!-- TOP BAR -->
+<header class="top-header">
+
+    <div class="logo">
+        LifeMetrics
+    </div>
+
+    <nav class="top-menu">
+
+        <a href="/" class="menu-item {{if eq .ActivePage "home"}}active{{end}}">
+            Home
+        </a>
+
+        <a href="/food" class="menu-item {{if eq .ActivePage "food"}}active{{end}}">
+            Food
+        </a>
+
+    </nav>
+
+</header>
+
+
+<!-- SECOND BAR -->
+{{if eq .ActivePage "food"}}
+
+<div class="sub-menu">
+
+    <a href="/food"
+       class="sub-item {{if eq .SubPage "foods"}}active{{end}}">
+        Available Foods
+    </a>
+
+    <a href="/meals"
+       class="sub-item {{if eq .SubPage "meals"}}active{{end}}">
+        Meals
+    </a>
+
+</div>
+
+{{end}}
+
+
+
+<div class="page-container">
+
+{{template "content" .}}
+
+</div>
+
+
+</body>
+</html>
+
+{{end}}
