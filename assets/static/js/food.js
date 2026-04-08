@@ -170,6 +170,42 @@ function submitMealItem() {
 }
 
 
+async function loadTodayNutrition(){
+
+    try{
+
+        const res = await fetch("/meals/gettodaynutrition");
+
+        const data = await res.json();
+
+        const nutrition = data[0];
+
+        if(!nutrition) return;
+
+        document.getElementById("calories-value").innerText =
+            Math.round(nutrition.total_calories);
+
+        document.getElementById("protein-value").innerText =
+            nutrition.total_protein.toFixed(1) + " g";
+
+        document.getElementById("carbs-value").innerText =
+            nutrition.total_carbs.toFixed(1) + " g";
+
+        document.getElementById("fat-value").innerText =
+            nutrition.total_fat.toFixed(1) + " g";
+
+        document.getElementById("fiber-value").innerText =
+            nutrition.total_fiber.toFixed(1) + " g";
+
+    }
+    catch(err){
+
+        console.error("Failed to load dashboard data", err);
+
+    }
+
+}
+
 
 window.onload = function () {
 
@@ -177,11 +213,17 @@ window.onload = function () {
 
     console.log("SubPage:", subPage)
 
-    if (subPage === "meals") {
+    if (subPage === "today") {
+
+        loadTodayNutrition()
+
+    }
+    else if (subPage === "meals") {
 
         showMealsView()
 
-    } else {
+    }
+    else {
 
         showFoodsView()
         loadFoods()

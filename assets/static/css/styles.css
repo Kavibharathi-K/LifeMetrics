@@ -183,3 +183,98 @@ button:hover {
     margin-top: 10px;
 
 }
+
+/* DASHBOARD */
+
+.dashboard-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    height:calc(100vh - 120px);
+
+}
+
+
+/* LEFT */
+
+.calories-container{
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+
+.ring{
+
+    width:220px;
+
+    height:220px;
+
+    border-radius:50%;
+
+    border:14px solid #4CAF50;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+
+.ring-text{
+
+    text-align:center;
+
+}
+
+
+.ring-text span{
+
+    font-size:38px;
+
+    font-weight:bold;
+
+}
+
+
+
+/* RIGHT */
+
+.macros-container{
+
+    flex:1;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+    padding:40px;
+
+}
+
+
+.macro-card{
+
+    padding:25px;
+
+    background:#2285d6;
+
+    border-radius:12px;
+
+    text-align:center;
+
+}

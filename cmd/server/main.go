@@ -8,7 +8,9 @@ import (
 
 	"github.com/Kavibharathi-K/lifemetrics/database"
 	"github.com/Kavibharathi-K/lifemetrics/services/food"
+	"github.com/Kavibharathi-K/lifemetrics/services/meal"
 	"github.com/Kavibharathi-K/lifemetrics/services/meal_item"
+	"github.com/Kavibharathi-K/lifemetrics/services/user_metrics"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -28,6 +30,8 @@ func main() {
 
 	food.RegisterRoutes(r, db)
 	meal_item.RegisterRoutes(r, db)
+	meal.RegisterRoutes(r, db)
+	user_metrics.RegisterRoutes(r, db)
 
 	log.Println("=======================")
 	log.Println("Life Metrics is running")

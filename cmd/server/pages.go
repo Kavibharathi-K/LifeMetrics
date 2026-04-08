@@ -19,6 +19,7 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"ActivePage": "home",
+		"SubPage":    "today",
 	}
 
 	renderTemplate(w, "home.html", data)

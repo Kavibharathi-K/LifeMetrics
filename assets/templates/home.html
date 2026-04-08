@@ -1,7 +1,68 @@
 {{define "content"}}
 
-<h1>Home Dashboard</h1>
+<div class="dashboard-row">
 
-<p>Welcome to LifeMetrics dashboard.</p>
+    <!-- LEFT SIDE -->
+    <div class="calories-container">
+
+        <div class="ring">
+
+            <div class="ring-text">
+
+                <span id="calories-value">0</span>
+
+                <p>cal today</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT SIDE -->
+
+    <div class="macros-container">
+
+        <div class="macro-card">
+
+            <h3>Protein</h3>
+
+            <p id="protein-value">0 g</p>
+
+        </div>
+
+
+        <div class="macro-card">
+
+            <h3>Carbs</h3>
+
+            <p id="carbs-value">0 g</p>
+
+        </div>
+
+
+        <div class="macro-card">
+
+            <h3>Fat</h3>
+
+            <p id="fat-value">0 g</p>
+
+        </div>
+
+
+        <div class="macro-card">
+
+            <h3>Fiber</h3>
+
+            <p id="fiber-value">0 g</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/js/food.js"></script>
 
 {{end}}

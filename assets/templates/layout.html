@@ -51,6 +51,20 @@
 {{end}}
 
 
+{{if eq .ActivePage "home"}}
+
+<div class="sub-menu">
+
+    <a href="/"
+       class="sub-item {{if eq .SubPage "today"}}active{{end}}">
+        Today
+    </a>
+
+</div>
+
+{{end}}
+
+
 
 <div class="page-container">
 
