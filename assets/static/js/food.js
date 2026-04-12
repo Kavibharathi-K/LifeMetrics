@@ -177,37 +177,129 @@ function submitMealItem() {
 }
 
 
+
 async function loadTodayNutrition(){
 
     try{
 
-        const res = await fetch("/meals/gettodaynutrition");
+        await loadMacroGoals()
 
-        const data = await res.json();
+        const res =
+        await fetch(
+            "/meals/gettodaynutrition"
+        )
 
-        const nutrition = data[0];
+        const data =
+        await res.json()
 
-        if(!nutrition) return;
+        const nutrition =
+        data[0]
 
-        document.getElementById("calories-value").innerText =
-            Math.round(nutrition.total_calories);
+        if(!nutrition) return
 
-        document.getElementById("protein-value").innerText =
-            nutrition.total_protein.toFixed(1) + " g";
 
-        document.getElementById("carbs-value").innerText =
-            nutrition.total_carbs.toFixed(1) + " g";
+        const calories =
+        Math.round(
+            nutrition.total_calories
+        )
 
-        document.getElementById("fat-value").innerText =
-            nutrition.total_fat.toFixed(1) + " g";
+        const protein =
+        nutrition.total_protein
 
-        document.getElementById("fiber-value").innerText =
-            nutrition.total_fiber.toFixed(1) + " g";
+        const carbs =
+        nutrition.total_carbs
+
+        const fat =
+        nutrition.total_fat
+
+        const fiber =
+        nutrition.total_fiber
+
+
+
+        document
+        .getElementById(
+            "calories-value"
+        )
+        .innerText =
+        calories
+
+
+        document
+        .getElementById(
+            "protein-value"
+        )
+        .innerText =
+        protein.toFixed(1) + " g"
+
+
+        document
+        .getElementById(
+            "carbs-value"
+        )
+        .innerText =
+        carbs.toFixed(1) + " g"
+
+
+        document
+        .getElementById(
+            "fat-value"
+        )
+        .innerText =
+        fat.toFixed(1) + " g"
+
+
+        document
+        .getElementById(
+            "fiber-value"
+        )
+        .innerText =
+        fiber.toFixed(1) + " g"
+
+
+
+        updateProgress(
+            "calories",
+            calories,
+            goalsData.calories,
+            " kcal"
+        )
+
+        updateProgress(
+            "protein",
+            protein,
+            goalsData.protein,
+            " g"
+        )
+
+        updateProgress(
+            "carbs",
+            carbs,
+            goalsData.carbs,
+            " g"
+        )
+
+        updateProgress(
+            "fat",
+            fat,
+            goalsData.fat,
+            " g"
+        )
+
+        updateProgress(
+            "fiber",
+            fiber,
+            goalsData.fiber,
+            " g"
+        )
 
     }
     catch(err){
 
-        console.error("Failed to load dashboard data", err);
+        console.error(
+            "Failed dashboard load",
+            err
+        )
 
     }
 
@@ -407,54 +499,130 @@ window.onload = function () {
 }
 
 
-// window.onload = function () {
-
-//     const subPage =
-//     document.body.dataset.subpage
-
-//     console.log("SubPage:", subPage)
+let goalsData = null;
 
 
-//     if (subPage === "today") {
 
-//         loadTodayNutrition()
+async function loadMacroGoals(){
 
-//     }
+    try{
 
-//     else if (subPage === "goals") {
+        const res =
+        await fetch("/usermetrics/getlatestusermetrics")
 
-//         loadGoals()
+        const data =
+        await res.json()
 
-//         const form =
-//         document.getElementById("goals-form")
+        goalsData = {
 
-//         if(form){
+            calories:
+            data.maintenance_calories,
 
-//             form.addEventListener(
-//                 "submit",
-//                 submitGoals
-//             )
+            protein:
+            data.protein_goal,
 
-//         }
+            carbs:
+            data.carb_goal,
 
-//     }
+            fat:
+            data.fat_goal,
 
-//     else if (subPage === "foods") {
+            fiber:
+            data.fiber_goal || 30
 
-//         document.getElementById("foodsView").style.display = "block"
+        }
 
-//         document.getElementById("mealsView").style.display = "none"
+    }
+    catch(err){
 
-//         loadFoods()
+        console.error(
+            "Failed to load macro goals",
+            err
+        )
 
-//     }
+    }
 
-//     else if (subPage === "meals") {
+}
 
-//         document.getElementById("foodsView").style.display = "none"
 
-//         document.getElementById("mealsView").style.display = "block"
 
-//     }
+function updateProgress(
+    id,
+    value,
+    goal,
+    unit
+){
 
-// }
+    if(!goal) return
+
+    const percent =
+    (value / goal) * 100
+
+
+    const bar =
+    document.getElementById(
+        `${id}-progress`
+    )
+
+    const text =
+    document.getElementById(
+        `${id}-remaining`
+    )
+
+
+    /* width */
+
+    bar.style.width =
+    Math.min(percent, 100) + "%"
+
+
+
+    /* status text */
+
+    if(value < goal){
+
+        const remaining =
+        goal - value
+
+        text.innerText =
+        remaining.toFixed(0) +
+        unit +
+        " left"
+
+        bar.style.background =
+        "#2563eb"   // theme blue
+
+    }
+
+    else if(value === goal){
+
+        text.innerText =
+        "Goal reached"
+
+        bar.style.background =
+        "#16a34a"   // subtle green
+
+    }
+
+    else{
+
+        const extra =
+        value - goal
+
+        text.innerText =
+        extra.toFixed(0) +
+        unit +
+        " extra"
+
+        bar.style.background =
+        "#dc2626"   // red
+
+
+        /* allow bar overflow visually */
+
+        bar.style.width =
+        Math.min(percent, 130) + "%"
+
+    }
+
+}
