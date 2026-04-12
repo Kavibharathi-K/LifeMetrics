@@ -24,6 +24,7 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 	r.Route("/usermetrics", func(r chi.Router) {
 
 		r.Post("/addusermetrics", handler.CreateUserMetrics)
+		r.Get("/getlatestusermetrics", handler.GetLatestUserMetrics)
 
 	})
 }
@@ -71,4 +72,32 @@ func (h *Handler) CreateUserMetrics(w http.ResponseWriter, r *http.Request) {
 			"fat_goal":     fatGoal,
 		},
 	)
+}
+
+func (h *Handler) GetLatestUserMetrics(
+
+	w http.ResponseWriter,
+	r *http.Request,
+
+) {
+
+	data, err :=
+		h.Repo.GetLatestUserMetrics(
+
+			r.Context(),
+		)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	json.NewEncoder(w).
+		Encode(data)
 }

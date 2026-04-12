@@ -15,6 +15,7 @@
     <div class="logo">
         LifeMetrics
     </div>
+    
 
     <nav class="top-menu">
 
@@ -22,7 +23,7 @@
             Home
         </a>
 
-        <a href="/food" class="menu-item {{if eq .ActivePage "food"}}active{{end}}">
+        <a href="/meals" class="menu-item {{if eq .ActivePage "food"}}active{{end}}">
             Food
         </a>
 
@@ -36,15 +37,15 @@
 
 <div class="sub-menu">
 
+    <a href="/meals"
+       class="sub-item {{if eq .SubPage "meals"}}active{{end}}">
+        Meals
+    </a>
     <a href="/food"
        class="sub-item {{if eq .SubPage "foods"}}active{{end}}">
         Available Foods
     </a>
 
-    <a href="/meals"
-       class="sub-item {{if eq .SubPage "meals"}}active{{end}}">
-        Meals
-    </a>
 
 </div>
 
@@ -58,6 +59,11 @@
     <a href="/"
        class="sub-item {{if eq .SubPage "today"}}active{{end}}">
         Today
+    </a>
+
+    <a href="/goals"
+       class="sub-item {{if eq .SubPage "goals"}}active{{end}}">
+        Goals
     </a>
 
 </div>

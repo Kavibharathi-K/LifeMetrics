@@ -25,7 +25,6 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "home.html", data)
 }
 
-
 // Available Foods page
 func FoodPage(w http.ResponseWriter, r *http.Request) {
 
@@ -37,7 +36,6 @@ func FoodPage(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "food.html", data)
 }
 
-
 // Meals page
 func MealsPage(w http.ResponseWriter, r *http.Request) {
 
@@ -47,4 +45,26 @@ func MealsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, "food.html", data)
+}
+
+func GoalsPage(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	data := map[string]interface{}{
+
+		"ActivePage": "home",
+
+		"SubPage": "goals",
+	}
+
+	renderTemplate(
+
+		w,
+
+		"goals.html",
+
+		data,
+	)
 }

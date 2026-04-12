@@ -65,3 +65,46 @@ func (r *Repository) CreateUserMetrics(
 
 	return id, err
 }
+
+
+func (r *Repository) GetLatestUserMetrics(
+
+	ctx context.Context,
+
+) (UserMetrics, error) {
+
+	var m UserMetrics
+
+	query := `
+		SELECT *
+		FROM usermetrics_getlatest()
+	`
+
+	err := r.DB.QueryRow(
+
+		ctx,
+		query,
+
+	).Scan(
+
+		&m.Id,
+
+		&m.Age,
+		&m.Gender,
+
+		&m.HeightCm,
+		&m.WeightKg,
+
+		&m.ActivityLevel,
+
+		&m.MaintenanceCalories,
+
+		&m.ProteinGoal,
+		&m.CarbGoal,
+		&m.FatGoal,
+
+		&m.CreatedAt,
+	)
+
+	return m, err
+}

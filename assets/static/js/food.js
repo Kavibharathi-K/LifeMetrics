@@ -60,6 +60,8 @@ function showFoodsView() {
 
     document.getElementById("mealsView").style.display = "none"
 
+     loadFoods()
+
 }
 
 
@@ -79,16 +81,21 @@ function showMealsView() {
 let selectedMealType = ""
 
 
-// open modal
-function openMealModal(mealType) {
+function openMealModal(mealType){
 
     selectedMealType = mealType
 
-    document.getElementById("foodNameInput").value = ""
-    document.getElementById("quantityInput").value = ""
+    document.querySelector(
+        "#mealModal h3"
+    ).innerText =
+    "Add food to " + mealType
 
-    document.getElementById("mealModal").style.display = "block"
+    document.getElementById("mealSuccessMsg").innerText=""
 
+    document.getElementById("foodNameInput").value=""
+    document.getElementById("quantityInput").value=""
+
+    document.getElementById("mealModal").style.display="block"
 }
 
 
@@ -207,27 +214,247 @@ async function loadTodayNutrition(){
 }
 
 
+async function loadGoals(){
+
+    try{
+
+        const res =
+        await fetch("/usermetrics/getlatestusermetrics")
+
+        if(!res.ok) return
+
+        const data =
+        await res.json()
+
+        if(!data) return
+
+        document.querySelector(
+            "[name=age]"
+        ).value = data.age
+
+        document.querySelector(
+            "[name=gender]"
+        ).value = data.gender
+
+        document.querySelector(
+            "[name=height_cm]"
+        ).value = data.height_cm
+
+        document.querySelector(
+            "[name=weight_kg]"
+        ).value = data.weight_kg
+
+        document.querySelector(
+            "[name=activity_level]"
+        ).value = data.activity_level
+
+    }
+    catch(err){
+
+        console.error(
+            "Failed to load goals",
+            err
+        )
+
+    }
+
+}
+
+async function submitGoals(event){
+
+    event.preventDefault()
+
+    const form =
+    document.getElementById("goals-form")
+
+    const data = {
+
+        age:
+        Number(
+            form.age.value
+        ),
+
+        gender:
+        form.gender.value,
+
+        height_cm:
+        Number(
+            form.height_cm.value
+        ),
+
+        weight_kg:
+        Number(
+            form.weight_kg.value
+        ),
+
+        activity_level:
+        form.activity_level.value
+    }
+
+
+    try{
+
+        const res =
+        await fetch(
+
+            "/usermetrics/addusermetrics",
+
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type":
+                    "application/json"
+
+                },
+
+                body:
+                JSON.stringify(data)
+
+            }
+
+        )
+
+
+        const result =
+        await res.json()
+
+
+        document
+        .getElementById("goals-result")
+
+        .innerHTML =
+
+        `
+        Targets Saved
+
+        <br><br>
+
+        Calories:
+        ${result.maintenance_calories}
+
+        <br>
+
+        Protein:
+        ${result.protein_goal} g
+
+        <br>
+
+        Carbs:
+        ${result.carb_goal} g
+
+        <br>
+
+        Fat:
+        ${result.fat_goal} g
+        `
+
+    }
+    catch(err){
+
+        console.error(
+            "Failed to save goals",
+            err
+        )
+
+    }
+
+}
+
+
 window.onload = function () {
 
-    const subPage = document.body.dataset.subpage
+    const subPage =
+    document.body.dataset.subpage
 
     console.log("SubPage:", subPage)
+
 
     if (subPage === "today") {
 
         loadTodayNutrition()
-
+        return
     }
-    else if (subPage === "meals") {
 
-        showMealsView()
 
+    if (subPage === "goals") {
+
+        loadGoals()
+
+        const form =
+        document.getElementById("goals-form")
+
+        if(form){
+
+            form.addEventListener(
+                "submit",
+                submitGoals
+            )
+        }
+
+        return
     }
-    else {
 
-        showFoodsView()
+
+    if(subPage === "foods"){
+
         loadFoods()
 
     }
 
 }
+
+
+// window.onload = function () {
+
+//     const subPage =
+//     document.body.dataset.subpage
+
+//     console.log("SubPage:", subPage)
+
+
+//     if (subPage === "today") {
+
+//         loadTodayNutrition()
+
+//     }
+
+//     else if (subPage === "goals") {
+
+//         loadGoals()
+
+//         const form =
+//         document.getElementById("goals-form")
+
+//         if(form){
+
+//             form.addEventListener(
+//                 "submit",
+//                 submitGoals
+//             )
+
+//         }
+
+//     }
+
+//     else if (subPage === "foods") {
+
+//         document.getElementById("foodsView").style.display = "block"
+
+//         document.getElementById("mealsView").style.display = "none"
+
+//         loadFoods()
+
+//     }
+
+//     else if (subPage === "meals") {
+
+//         document.getElementById("foodsView").style.display = "none"
+
+//         document.getElementById("mealsView").style.display = "block"
+
+//     }
+
+// }

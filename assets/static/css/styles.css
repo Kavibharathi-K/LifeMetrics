@@ -1,256 +1,232 @@
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f5f6f7;
+/* GLOBAL */
+
+body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background:#f8fafc;
+    color:#0f172a;
 }
 
 
 /* HEADER */
-.top-header {
-    display: flex;
-    align-items: center;
-    background-color: #0d5aa7;
-    color: white;
-    padding: 0 40px;
-    height: 60px;
+
+.top-header{
+    display:flex;
+    align-items:center;
+    background:#1e293b;
+    color:white;
+    padding:0 40px;
+    height:64px;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:600;
+    margin-right:40px;
+}
+
+.top-menu{
+    display:flex;
+    gap:30px;
+}
+
+.menu-item{
+    color:#cbd5f5;
+    text-decoration:none;
+    font-weight:500;
+    padding:20px 0;
+    transition:.2s;
+}
+
+.menu-item:hover{
+    color:white;
+}
+
+.menu-item.active{
+    color:white;
+    border-bottom:3px solid #3b82f6;
 }
 
 
-/* LOGO */
-.logo {
-    font-size: 26px;
-    font-weight: bold;
-    margin-right: 40px;
+/* SUB MENU */
+
+.sub-menu{
+    background:white;
+    border-bottom:1px solid #e5e7eb;
+    padding-left:40px;
+    height:50px;
+    display:flex;
+    align-items:center;
+}
+
+.sub-item{
+    color:#64748b;
+    text-decoration:none;
+    margin-right:25px;
+    font-weight:500;
+    padding:15px 0;
+}
+
+.sub-item.active{
+    color:#2563eb;
+    border-bottom:2px solid #2563eb;
 }
 
 
-/* MENU */
-.top-menu {
-    display: flex;
-    gap: 25px;
+/* PAGE */
+
+/* PAGE LAYOUT */
+
+.page-container{
+
+    padding:20px 32px;
+
+    max-width:1200px;
+
+    margin:auto;
+
 }
 
-.menu-item {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 20px 0;
+#pageTitle{
+    margin-bottom:12px;
 }
 
 
-/* ACTIVE PAGE */
-.menu-item.active {
-    border-bottom: 3px solid #ffd54f;
-}
+/* CARD */
 
+/* GLOBAL CARD */
 
-/* PAGE CONTENT */
-.page-container {
-    padding: 30px 40px;
-}
+.card{
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-}
+    background:white;
 
-th {
-    background-color: #0d5aa7;
-    color: white;
-    padding: 12px;
-    text-align: left;
-}
+    padding:20px 22px;
 
-td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
+    border-radius:14px;
 
-tr:hover {
-    background-color: #f2f6fb;
-}
-
-.sub-menu {
-
-    background-color: #114a7a;
-
-    padding-left: 40px;
-
-    height: 45px;
-
-    display: flex;
-
-    align-items: center;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
 
 }
 
 
-.sub-item {
+/* BUTTON */
 
-    color: white;
+button{
 
-    text-decoration: none;
+    padding:8px 16px;
 
-    margin-right: 25px;
+    border-radius:8px;
 
-    font-weight: bold;
+    border:none;
+
+    background:#2563eb;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+}
+
+
+button:hover{
+
+    background:#1e4fd1;
 
 }
 
 
-.sub-item.active {
+/* TABLE */
 
-    border-bottom: 3px solid #ffd54f;
-
-    padding-bottom: 10px;
-
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 3px 10px rgba(0,0,0,.04);
 }
 
-.meal-block {
-    margin-bottom: 25px;
+th{
+    background:#f1f5f9;
+    text-align:left;
+    padding:13px;
+    font-size:14px;
 }
 
-.meal-block h2 {
-    margin-bottom: 5px;
+td{
+    padding:13px;
+    border-top:1px solid #f1f5f9;
 }
 
-.meal-block a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 500;
+tr:hover{
+    background:#f8fafc;
 }
 
-.meal-block a:hover {
-    text-decoration: underline;
-}
-
-button {
-    background-color: #1e5a8a;
-    color: white;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #17486d;
-}
-
-
-/* modal background */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.4);
-}
-
-
-/* modal box */
-.modal-content {
-    background-color: white;
-    width: 300px;
-    padding: 20px;
-    margin: 120px auto;
-    border-radius: 6px;
-}
-
-
-.modal-content input {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 6px;
-}
-
-
-.modal-buttons {
-    display: flex;
-    justify-content: space-between;
-}
-
-.success-msg {
-
-    color: green;
-
-    font-size: 14px;
-
-    margin-top: 10px;
-
-}
 
 /* DASHBOARD */
+
+/* DASHBOARD - NO SCROLL */
+/* TODAY PAGE FINAL */
+
+/* ROW */
 
 .dashboard-row{
 
     display:flex;
 
-    justify-content:space-between;
+    gap:18px;
 
-    align-items:center;
+    margin-top:12px;
 
-    height:calc(100vh - 120px);
+    align-items:stretch;
 
 }
 
 
-/* LEFT */
+/* CALORIES */
 
 .calories-container{
 
-    flex:1;
+    background:white;
+
+    padding:16px 20px;
+
+    border-radius:12px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+    min-width:150px;
 
     display:flex;
 
-    justify-content:center;
-
-    align-items:center;
-
-}
-
-
-.ring{
-
-    width:220px;
-
-    height:220px;
-
-    border-radius:50%;
-
-    border:14px solid #4CAF50;
-
-    display:flex;
+    flex-direction:column;
 
     justify-content:center;
 
-    align-items:center;
+}
+
+
+#calories-value{
+
+    font-size:28px;
+
+    font-weight:600;
 
 }
 
 
-.ring-text{
+.calories-container p{
 
-    text-align:center;
+    font-size:13px;
 
-}
-
-
-.ring-text span{
-
-    font-size:38px;
-
-    font-weight:bold;
+    color:#64748b;
 
 }
 
 
-
-/* RIGHT */
+/* MACROS GRID */
 
 .macros-container{
 
@@ -258,23 +234,311 @@ button:hover {
 
     display:grid;
 
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(4, 1fr);
 
-    gap:20px;
-
-    padding:40px;
+    gap:14px;
 
 }
 
+
+/* MACRO CARD */
 
 .macro-card{
 
-    padding:25px;
+    background:white;
 
-    background:#2285d6;
+    padding:14px 16px;
+
+    border-radius:10px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.calories-container{
+    border:1px solid #e2e8f0;
+}
+
+.macro-card h3{
+
+    font-size:13px;
+
+    color:#64748b;
+
+    margin-bottom:4px;
+
+}
+
+
+.macro-card p{
+
+    font-size:17px;
+
+    font-weight:600;
+
+}
+
+
+/* FORM */
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;   /* space between label and input */
+
+}
+
+label{
+    display:block;
+    font-size:13px;
+    margin-bottom:4px;
+    color:#475569;
+}
+
+input,select{
+    width:100%;
+    padding:9px;
+    border-radius:8px;
+    border:1px solid #e2e8f0;
+}
+
+input:focus{
+    outline:none;
+    border-color:#2563eb;
+}
+
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:1000;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(15,23,42,.55);
+    backdrop-filter:blur(4px);
+}
+
+.modal-content{
+    background:white;
+    width:320px;
+    padding:22px;
+    margin:120px auto;
+    border-radius:14px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.modal-content h3{
+    margin-bottom:12px;
+}
+
+.modal-content input{
+    margin-bottom:10px;
+}
+
+.modal-buttons{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+}
+
+.success-msg{
+    color:#16a34a;
+    font-size:13px;
+    margin-top:8px;
+}
+
+
+/* MEALS PAGE - COMPACT NO SCROLL */
+
+/* MEALS PAGE - FINAL PERFECT SPACING */
+
+/* MEALS GRID */
+
+.meals-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:18px;
+
+    margin-top:10px;
+
+}
+
+
+.meal-card{
+
+    background:white;
+
+    padding:18px;
 
     border-radius:12px;
 
-    text-align:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    height:110px;
 
 }
+
+
+.meal-card h3{
+
+    margin-bottom:8px;
+
+}
+
+
+.meal-card button{
+
+    padding:7px 13px;
+
+    font-size:13px;
+
+}
+
+
+.section-title{
+
+    margin-bottom:8px;
+
+}
+
+.section-title{
+
+    margin-bottom:12px;
+
+    font-size:26px;
+
+}
+
+/* GOALS PAGE PERFECT LAYOUT */
+/* GOALS PAGE FINAL */
+
+/* GOALS PAGE FINAL FIX */
+
+/* GOALS */
+
+.goals-container{
+
+    background:white;
+
+    padding:24px 28px;
+
+    border-radius:14px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+
+/* form layout */
+
+#goals-form{
+
+    display:grid;
+
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+
+    column-gap:32px;   /* space between left & right fields */
+
+    row-gap:20px;      /* space between rows */
+
+    max-width:720px;
+
+    margin-top:12px;
+
+}
+
+
+/* full width fields */
+
+.form-full{
+
+    grid-column:1 / -1;
+
+}
+
+
+/* inputs */
+
+input, select{
+
+    width:100%;
+
+    padding:9px 10px;
+
+    border-radius:8px;
+
+    border:1px solid #e2e8f0;
+
+    box-sizing:border-box;
+}
+
+
+/* button */
+
+#goals-form button{
+
+    grid-column:1 / -1;
+
+    width:180px;
+
+    margin-top:6px;
+
+}
+
+#foodsView{
+
+    height:calc(100vh - 170px);
+
+    overflow:auto;
+
+}
+
+h1, h2{
+
+    margin-bottom:14px;
+
+    font-weight:600;
+
+}
+
+/* DASHBOARD GRID */
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr 1fr;
+
+    gap:18px;
+
+}
+
+
+.macro-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:18px;
+
+}
+

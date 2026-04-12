@@ -41,6 +41,7 @@ func main() {
 	r.Get("/", HomePage)
 	r.Get("/food", FoodPage)
 	r.Get("/meals", MealsPage)
+	r.Get("/goals", GoalsPage)
 
 	// static files
 	fs := http.FileServer(http.Dir("./assets/static"))

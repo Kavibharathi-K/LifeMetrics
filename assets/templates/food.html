@@ -1,9 +1,10 @@
 {{define "content"}}
 
-<h1 id="pageTitle">Available Foods</h1>
+{{if eq .SubPage "foods"}}
 
-<!-- Available Foods View -->
-<div id="foodsView">
+<div id="foodsView" class="card">
+
+<h1 class="section-title">Available Foods</h1>
 
 <table id="foodTable">
 
@@ -18,67 +19,50 @@
 </tr>
 </thead>
 
-<tbody>
-</tbody>
+<tbody></tbody>
 
 </table>
 
 </div>
 
+{{end}}
 
-<!-- Meals View -->
-<div id="mealsView" style="display:none">
 
-<div class="meal-block">
 
-<h2>Breakfast</h2>
+{{if eq .SubPage "meals"}}
 
-<button onclick="openMealModal('breakfast')">
-Add Food
-</button>
+<div id="mealsView">
 
+<h1 class="section-title">Meals</h1>
+
+<div class="meals-grid">
+
+<div class="meal-card">
+<h3>Breakfast</h3>
+<button onclick="openMealModal('breakfast')">Add Food</button>
 </div>
 
-<hr>
-
-
-<div class="meal-block">
-
-<h2>Lunch</h2>
-
-<button onclick="openMealModal('lunch')">
-Add Food
-</button>
-
+<div class="meal-card">
+<h3>Lunch</h3>
+<button onclick="openMealModal('lunch')">Add Food</button>
 </div>
 
-<hr>
-
-
-<div class="meal-block">
-
-<h2>Dinner</h2>
-
-<button onclick="openMealModal('dinner')">
-Add Food
-</button>
-
+<div class="meal-card">
+<h3>Dinner</h3>
+<button onclick="openMealModal('dinner')">Add Food</button>
 </div>
 
-<hr>
-
-
-<div class="meal-block">
-
-<h2>Snacks</h2>
-
-<button onclick="openMealModal('snacks')">
-Add Food
-</button>
+<div class="meal-card">
+<h3>Snacks</h3>
+<button onclick="openMealModal('snacks')">Add Food</button>
+</div>
 
 </div>
 
 </div>
+
+{{end}}
+
 
 
 <!-- Modal -->
