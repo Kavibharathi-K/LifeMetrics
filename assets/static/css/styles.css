@@ -365,11 +365,26 @@ input:focus{
 
     display:grid;
 
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(4, 1fr);
 
     gap:18px;
 
-    margin-top:10px;
+    margin-top:12px;
+
+    height:320px; /* fixed grid height */
+
+}
+
+
+.meals-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4, 1fr);
+
+    gap:18px;
+
+    margin-top:12px;
 
 }
 
@@ -378,9 +393,9 @@ input:focus{
 
     background:white;
 
-    padding:18px;
+    padding:18px 16px;
 
-    border-radius:12px;
+    border-radius:14px;
 
     box-shadow:0 2px 8px rgba(0,0,0,.05);
 
@@ -388,11 +403,21 @@ input:focus{
 
     flex-direction:column;
 
-    justify-content:center;
+    height:260px;   /* same height for all cards */
 
-    align-items:center;
+}
 
-    height:110px;
+.meal-food-list::-webkit-scrollbar{
+
+    width:4px;
+
+}
+
+.meal-food-list::-webkit-scrollbar-thumb{
+
+    background:#e2e8f0;
+
+    border-radius:10px;
 
 }
 
@@ -405,10 +430,102 @@ input:focus{
 
 
 .meal-card button{
-
+    margin-top:auto;
     padding:7px 13px;
 
     font-size:13px;
+
+}
+
+.meal-food-list{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    margin:8px 0;
+
+    padding-right:4px;
+
+    max-height:110px; /* about 3 foods */
+
+}
+
+
+.meal-food-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:6px 0;
+
+    font-size:14px;
+
+}
+
+
+.meal-food-row:not(:last-child){
+
+    border-bottom:1px solid #f1f5f9;
+
+}
+
+
+.meal-food-name{
+
+    font-weight:500;
+
+    color:#0f172a;
+
+}
+
+
+.meal-food-qty{
+
+    font-size:12px;
+
+    color:#64748b;
+
+}
+
+
+.meal-food-cal{
+
+    font-weight:600;
+
+    color:#1e293b;
+
+}
+
+
+.meal-total{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding-top:8px;
+
+    margin-top:6px;
+
+    border-top:1px solid #e2e8f0;
+
+    font-weight:600;
+
+}
+
+.meal-empty{
+
+    text-align:center;
+
+    color:#94a3b8;
+
+    font-size:13px;
+
+    margin:20px 0;
 
 }
 

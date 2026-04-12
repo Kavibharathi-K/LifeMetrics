@@ -30,6 +30,8 @@ type UserMetrics struct {
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
 
+
+
 func CalculateMaintenanceCalories(age int, gender string, heightCm float64, weightKg float64, activityLevel string) int {
 
 	var bmr float64
