@@ -17,7 +17,7 @@ func NewRepository(db *pgxpool.Pool) *Repository {
 
 func NewPostgresConnection() (*pgxpool.Pool, error) {
 
-	dsn := "postgres://postgres:pass1234@localhost:5432/lifemetrics"
+	dsn := "postgres://postgres:pass1234@localhost:5432/Lifemetrics"
 
 	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {
