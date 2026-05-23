@@ -2,124 +2,138 @@
 
 {{if eq .SubPage "foods"}}
 
-<div id="foodsView" class="card">
+<section id="foodsView" class="card">
 
-<h1 class="section-title">Available Foods</h1>
+    <div class="section-header">
 
-<table id="foodTable">
+        <h1 class="section-title">
+            Available Foods
+        </h1>
 
-<thead>
-<tr>
-<th>Name</th>
-<th>Base Qty</th>
-<th>Calories</th>
-<th>Protein</th>
-<th>Carbs</th>
-<th>Fat</th>
-</tr>
-</thead>
+    </div>
 
-<tbody></tbody>
+    <div class="table-container">
 
-</table>
+        <table id="foodTable">
 
-</div>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Base Qty</th>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Carbs</th>
+                    <th>Fat</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
+</section>
 
 {{end}}
-
 
 
 {{if eq .SubPage "meals"}}
 
-<div id="mealsView">
+<section id="mealsView">
 
-<h1 class="section-title">Meals</h1>
+    <div class="section-header">
 
-<div class="meals-grid">
+        <h1 class="section-title">
+            Meals
+        </h1>
 
-<div class="meal-card">
-<h3>Breakfast</h3>
+    </div>
 
-<div id="breakfastFoods" class="meal-foods"></div>
+    <div class="meals-grid">
 
-<button onclick="openMealModal('breakfast')">Add Food</button>
-</div>
+        <div class="meal-card">
+            <h3>Breakfast</h3>
+            <div id="breakfastFoods" class="meal-foods"></div>
+            <button onclick="openMealModal('breakfast')">
+                Add Food
+            </button>
+        </div>
 
+        <div class="meal-card">
+            <h3>Lunch</h3>
+            <div id="lunchFoods" class="meal-foods"></div>
+            <button onclick="openMealModal('lunch')">
+                Add Food
+            </button>
+        </div>
 
-<div class="meal-card">
-<h3>Lunch</h3>
+        <div class="meal-card">
+            <h3>Dinner</h3>
+            <div id="dinnerFoods" class="meal-foods"></div>
+            <button onclick="openMealModal('dinner')">
+                Add Food
+            </button>
+        </div>
 
-<div id="lunchFoods" class="meal-foods"></div>
+        <div class="meal-card">
+            <h3>Snacks</h3>
+            <div id="snackFoods" class="meal-foods"></div>
+            <button onclick="openMealModal('snacks')">
+                Add Food
+            </button>
+        </div>
 
-<button onclick="openMealModal('lunch')">Add Food</button>
-</div>
+    </div>
 
-
-<div class="meal-card">
-<h3>Dinner</h3>
-
-<div id="dinnerFoods" class="meal-foods"></div>
-
-<button onclick="openMealModal('dinner')">Add Food</button>
-</div>
-
-
-<div class="meal-card">
-<h3>Snacks</h3>
-
-<div id="snackFoods" class="meal-foods"></div>
-
-<button onclick="openMealModal('snacks')">Add Food</button>
-</div>
-
-</div>
-
-</div>
+</section>
 
 {{end}}
 
-
-
-<!-- Modal -->
 <div id="mealModal" class="modal">
 
-<div class="modal-content">
+    <div class="modal-content">
 
-<h3>Add Food</h3>
+        <h3>Add Food</h3>
 
-<label>Food Name</label>
-<input type="text" id="foodNameInput">
+        <label>Food Name</label>
+        <input type="text" id="foodNameInput">
 
+        <label>Quantity</label>
+        <input type="number" id="quantityInput">
 
-<label>Quantity</label>
-<input type="number" id="quantityInput">
+        <label>Measurement Type</label>
 
+        <select id="measurementTypeInput">
 
-<label>Measurement Type</label>
-<select id="measurementTypeInput">
+            <option value="gram">
+                Gram
+            </option>
 
-<option value="gram">Gram</option>
+            <option value="unit">
+                Unit
+            </option>
 
-<option value="unit">Unit</option>
+        </select>
 
-</select>
+        <p id="mealSuccessMsg"
+           class="success-msg">
+        </p>
 
+        <div class="modal-buttons">
 
-<p id="mealSuccessMsg" class="success-msg"></p>
+            <button onclick="closeMealModal()">
+                Cancel
+            </button>
 
+            <button onclick="submitMealItem()">
+                Submit
+            </button>
 
-<div class="modal-buttons">
+        </div>
 
-<button onclick="closeMealModal()">Cancel</button>
-
-<button onclick="submitMealItem()">Submit</button>
+    </div>
 
 </div>
-
-</div>
-
-</div>
-
-<script src="/static/js/food.js"></script>
 
 {{end}}

@@ -1,0 +1,25 @@
+{{define "navbar"}}
+
+<header class="top-header">
+
+    <div class="logo">
+        LifeMetrics
+    </div>
+
+    <nav class="top-menu">
+
+        <a href="/"
+           class="menu-item {{if eq .ActivePage "home"}}active{{end}}">
+            Home
+        </a>
+
+        <a href="/meals"
+           class="menu-item {{if eq .ActivePage "food"}}active{{end}}">
+            Food
+        </a>
+
+    </nav>
+
+</header>
+
+{{end}}

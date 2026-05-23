@@ -5,14 +5,33 @@ import (
 	"net/http"
 )
 
-func renderTemplate(w http.ResponseWriter, page string, data interface{}) {
+func renderTemplate(
+	w http.ResponseWriter,
+	page string,
+	data interface{},
+) {
 
-	tmpl := template.Must(template.ParseFiles(
-		"assets/templates/layout.html",
-		"assets/templates/"+page,
-	))
+	tmpl := template.Must(
 
-	tmpl.ExecuteTemplate(w, "layout", data)
+		template.ParseFiles(
+
+			"assets/templates/layout.html",
+
+			"assets/templates/"+page,
+
+			"assets/templates/partials/navbar.html",
+
+			"assets/templates/partials/submenu.html",
+
+			"assets/templates/partials/scripts.html",
+		),
+	)
+
+	tmpl.ExecuteTemplate(
+		w,
+		"layout",
+		data,
+	)
 }
 
 func HomePage(w http.ResponseWriter, r *http.Request) {
@@ -25,16 +44,18 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "home.html", data)
 }
 
+
 // Available Foods page
 func FoodPage(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"ActivePage": "food",
-		"SubPage":    "foods",   // IMPORTANT
+		"SubPage":    "foods",
 	}
 
 	renderTemplate(w, "food.html", data)
 }
+
 
 // Meals page
 func MealsPage(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +67,7 @@ func MealsPage(w http.ResponseWriter, r *http.Request) {
 
 	renderTemplate(w, "food.html", data)
 }
+
 
 func GoalsPage(
 	w http.ResponseWriter,
@@ -60,11 +82,8 @@ func GoalsPage(
 	}
 
 	renderTemplate(
-
 		w,
-
 		"goals.html",
-
 		data,
 	)
 }

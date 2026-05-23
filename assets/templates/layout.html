@@ -1,85 +1,38 @@
 {{define "layout"}}
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-<link rel="stylesheet" href="/static/css/styles.css">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>LifeMetrics</title>
+
+    <link rel="stylesheet"
+          href="/static/css/styles.css">
+
 </head>
 
 <body data-subpage="{{.SubPage}}">
 
-<!-- TOP BAR -->
-<header class="top-header">
+    {{template "navbar" .}}
 
-    <div class="logo">
-        LifeMetrics
-    </div>
-    
+    {{template "submenu" .}}
 
-    <nav class="top-menu">
+    <main class="page-container">
 
-        <a href="/" class="menu-item {{if eq .ActivePage "home"}}active{{end}}">
-            Home
-        </a>
+        {{template "content" .}}
 
-        <a href="/meals" class="menu-item {{if eq .ActivePage "food"}}active{{end}}">
-            Food
-        </a>
+    </main>
 
-    </nav>
-
-</header>
-
-
-<!-- SECOND BAR -->
-{{if eq .ActivePage "food"}}
-
-<div class="sub-menu">
-
-    <a href="/meals"
-       class="sub-item {{if eq .SubPage "meals"}}active{{end}}">
-        Meals
-    </a>
-    <a href="/food"
-       class="sub-item {{if eq .SubPage "foods"}}active{{end}}">
-        Available Foods
-    </a>
-
-
-</div>
-
-{{end}}
-
-
-{{if eq .ActivePage "home"}}
-
-<div class="sub-menu">
-
-    <a href="/"
-       class="sub-item {{if eq .SubPage "today"}}active{{end}}">
-        Today
-    </a>
-
-    <a href="/goals"
-       class="sub-item {{if eq .SubPage "goals"}}active{{end}}">
-        Goals
-    </a>
-
-</div>
-
-{{end}}
-
-
-
-<div class="page-container">
-
-{{template "content" .}}
-
-</div>
-
+    {{template "scripts" .}}
 
 </body>
+
 </html>
 
 {{end}}
