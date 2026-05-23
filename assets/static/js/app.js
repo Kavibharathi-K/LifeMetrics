@@ -1,5 +1,7 @@
 window.onload = function(){
 
+    initializeTheme()
+
     const subPage =
     document.body.dataset.subpage
 
