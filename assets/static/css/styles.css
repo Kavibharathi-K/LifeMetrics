@@ -18,25 +18,25 @@
 
 .dark-mode{
 
-    --bg-primary:#000000;
+    --bg-primary:#0f1115;
 
-    --bg-secondary:#111111;
+    --bg-secondary:#181c23;
 
-    --bg-tertiary:#1a1a1a;
+    --bg-tertiary:#232936;
 
     --text-primary:#f8fafc;
 
     --text-secondary:#9ca3af;
 
-    --border-color:#353434;
+    --border-color:#2d3748;
 
-    --header-bg:#000000;
+    --header-bg:#111827;
 
     --accent:#3b82f6;
 
     --accent-hover:#2563eb;
 
-    --shadow:0 2px 14px rgba(0,0,0,.65);
+    --shadow:0 4px 18px rgba(0,0,0,.35);
 }
 /* GLOBAL */
 
