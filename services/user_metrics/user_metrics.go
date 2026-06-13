@@ -83,18 +83,15 @@ func CalculateMacroGoals(
 	weightKg int,
 ) (int, int, int) {
 
-	// protein based on body weight
 	proteinGrams :=
 		int(float64(weightKg) * 2.0)
 
-	// fats fixed to 25% calories
 	fatCalories :=
 		float64(calories) * 0.25
 
 	fatGrams :=
 		int(fatCalories / 9)
 
-	// remaining calories go to carbs
 	carbCalories :=
 		float64(calories) * 0.45
 

@@ -10,6 +10,7 @@ import (
 	"github.com/Kavibharathi-K/lifemetrics/services/food"
 	"github.com/Kavibharathi-K/lifemetrics/services/meal"
 	"github.com/Kavibharathi-K/lifemetrics/services/meal_item"
+	"github.com/Kavibharathi-K/lifemetrics/services/usda"
 	"github.com/Kavibharathi-K/lifemetrics/services/user_metrics"
 	"github.com/go-chi/chi/v5"
 )
@@ -32,6 +33,7 @@ func main() {
 	meal_item.RegisterRoutes(r, db)
 	meal.RegisterRoutes(r, db)
 	user_metrics.RegisterRoutes(r, db)
+	usda.RegisterRoutes(r)
 
 	log.Println("=======================")
 	log.Println("Life Metrics is running")

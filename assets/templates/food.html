@@ -4,11 +4,15 @@
 
 <section id="foodsView" class="card">
 
-    <div class="section-header">
+    <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;">
 
         <h1 class="section-title">
             Available Foods
         </h1>
+
+        <button id="addFoodBtn" onclick="openAddFoodModal()" style="margin-left:auto;">
+            + Add Food
+        </button>
 
     </div>
 
@@ -24,12 +28,42 @@
                     <th>Protein</th>
                     <th>Carbs</th>
                     <th>Fat</th>
+                    <th>Fiber</th>
                 </tr>
             </thead>
 
             <tbody></tbody>
 
         </table>
+
+    </div>
+
+    <div id="addFoodModal" class="modal">
+
+        <div class="modal-content">
+
+            <h3>Add Food</h3>
+
+            <label>Search Food</label>
+            <input type="text" id="foodSearchInput" placeholder="Enter food name">
+
+            <div id="foodSearchResults"></div>
+
+            <p id="foodSearchMsg" class="success-msg"></p>
+
+            <div class="modal-buttons">
+
+                <button onclick="closeAddFoodModal()">
+                    Cancel
+                </button>
+
+                <button id="submitFoodBtn" onclick="submitSelectedFood()" disabled>
+                    Add Food
+                </button>
+
+            </div>
+
+        </div>
 
     </div>
 

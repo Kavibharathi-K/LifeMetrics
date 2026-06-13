@@ -689,3 +689,55 @@ h1, h2{
 
     background:rgba(255,255,255,.08);
 }
+
+.food-search-item {
+
+    padding: 12px;
+
+    border: 1px solid #2f3748;
+
+    border-radius: 8px;
+
+    margin-top: 8px;
+
+    cursor: pointer;
+
+}
+
+.food-search-item:hover {
+
+    background: rgba(
+        59,
+        130,
+        246,
+        0.1
+    );
+
+}
+
+.food-search-item.selected {
+
+    border: 1px solid #3b82f6;
+
+    background: rgba(
+        59,
+        130,
+        246,
+        0.2
+    );
+
+}
+
+#foodSearchResults {
+
+    max-height: 300px;
+
+    overflow-y: auto;
+
+}
+
+.modal-content {
+
+    max-height: 80vh;
+
+}
