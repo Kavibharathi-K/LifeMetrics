@@ -87,3 +87,13 @@ func GoalsPage(
 		data,
 	)
 }
+
+func WorkoutPage(w http.ResponseWriter, r *http.Request) {
+
+	data := map[string]interface{}{
+		"ActivePage": "workout",
+		"SubPage":    "workout",
+	}
+
+	renderTemplate(w, "workout.html", data)
+}

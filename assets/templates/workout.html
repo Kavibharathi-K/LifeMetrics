@@ -1,0 +1,184 @@
+{{define "content"}}
+
+<section class="workout-page">
+
+    <div class="workout-page-header">
+
+        <div>
+            <p class="workout-eyebrow">Weekly plan</p>
+            <h1 class="section-title">Workout Schedule</h1>
+            <p class="workout-subtitle">
+                Build a simple training plan for every day of the week.
+            </p>
+        </div>
+
+        <button id="openWorkoutModalBtn" type="button">
+            + Add Workout
+        </button>
+
+    </div>
+
+    <div id="workoutPageMessage"
+         class="workout-page-message"
+         role="status">
+    </div>
+
+    <div id="workoutScheduleGrid"
+         class="workout-schedule-grid"
+         aria-live="polite">
+
+        <div class="workout-loading">
+            Loading your weekly schedule...
+        </div>
+
+    </div>
+
+</section>
+
+<div id="workoutModal"
+     class="modal workout-modal"
+     aria-hidden="true">
+
+    <div class="modal-content workout-modal-content"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="workoutModalTitle">
+
+        <div class="workout-modal-header">
+            <div>
+                <p class="workout-eyebrow">Plan your session</p>
+                <h3 id="workoutModalTitle">Add Workout</h3>
+            </div>
+
+            <button class="workout-icon-button"
+                    type="button"
+                    data-close-workout-modal
+                    aria-label="Close workout form">
+                &times;
+            </button>
+        </div>
+
+        <form id="workoutForm">
+
+            <input id="workoutScheduleId"
+                   type="hidden">
+
+            <div class="workout-form-grid">
+
+                <div class="form-group">
+                    <label for="workoutDayInput">Day</label>
+                    <select id="workoutDayInput" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="workoutNameInput">Workout name</label>
+                    <input id="workoutNameInput"
+                           type="text"
+                           maxlength="100"
+                           placeholder="Chest and Triceps"
+                           required>
+                </div>
+
+            </div>
+
+            <div class="workout-exercise-heading">
+                <div>
+                    <label>Exercises</label>
+                    <span>Add them in the order you plan to perform them.</span>
+                </div>
+
+                <button id="addExerciseInputBtn"
+                        class="workout-secondary-button"
+                        type="button">
+                    + Exercise
+                </button>
+            </div>
+
+            <div id="workoutExerciseInputs"
+                 class="workout-exercise-inputs">
+            </div>
+
+            <p id="workoutFormError"
+               class="workout-form-error">
+            </p>
+
+            <div class="modal-buttons workout-modal-actions">
+                <button class="workout-secondary-button"
+                        type="button"
+                        data-close-workout-modal>
+                    Cancel
+                </button>
+
+                <button id="saveWorkoutBtn"
+                        type="submit">
+                    Save Workout
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div id="addWorkoutExerciseModal"
+     class="modal workout-modal"
+     aria-hidden="true">
+
+    <div class="modal-content workout-add-exercise-content"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="addWorkoutExerciseTitle">
+
+        <div class="workout-modal-header">
+            <div>
+                <p class="workout-eyebrow">Existing workout</p>
+                <h3 id="addWorkoutExerciseTitle">Add Exercise</h3>
+            </div>
+
+            <button class="workout-icon-button"
+                    type="button"
+                    data-close-exercise-modal
+                    aria-label="Close exercise form">
+                &times;
+            </button>
+        </div>
+
+        <form id="addWorkoutExerciseForm">
+
+            <input id="exerciseWorkoutScheduleId"
+                   type="hidden">
+
+            <div class="form-group">
+                <label for="newWorkoutExerciseName">Exercise name</label>
+                <input id="newWorkoutExerciseName"
+                       type="text"
+                       maxlength="150"
+                       placeholder="Cable Fly"
+                       required>
+            </div>
+
+            <p id="addWorkoutExerciseError"
+               class="workout-form-error">
+            </p>
+
+            <div class="modal-buttons workout-modal-actions">
+                <button class="workout-secondary-button"
+                        type="button"
+                        data-close-exercise-modal>
+                    Cancel
+                </button>
+
+                <button id="saveWorkoutExerciseBtn"
+                        type="submit">
+                    Add Exercise
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{{end}}

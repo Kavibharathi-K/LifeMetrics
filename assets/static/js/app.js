@@ -56,4 +56,11 @@ window.onload = function(){
 
     }
 
+
+    if(subPage === "workout"){
+
+        initializeWorkoutPage()
+
+    }
+
 }
