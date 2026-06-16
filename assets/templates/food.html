@@ -2,65 +2,106 @@
 
 {{if eq .SubPage "foods"}}
 
-<section id="foodsView" class="card">
+<section id="foodsView" class="page-section">
 
-    <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="page-header">
 
-        <h1 class="section-title">
-            Available Foods
-        </h1>
+        <div>
+            <p class="page-eyebrow">Food library</p>
+            <h1 class="section-title">Available Foods</h1>
+            <p class="page-subtitle">
+                Browse and manage foods in your database.
+            </p>
+        </div>
 
-        <button id="addFoodBtn" onclick="openAddFoodModal()" style="margin-left:auto;">
+        <button id="addFoodBtn"
+                type="button"
+                onclick="openAddFoodModal()">
             + Add Food
         </button>
 
     </div>
 
-    <div class="table-container">
-
-        <table id="foodTable">
-
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Base Qty</th>
-                    <th>Calories</th>
-                    <th>Protein</th>
-                    <th>Carbs</th>
-                    <th>Fat</th>
-                    <th>Fiber</th>
-                </tr>
-            </thead>
-
-            <tbody></tbody>
-
-        </table>
-
+    <div id="foodsPageMessage"
+         class="page-message"
+         role="status">
     </div>
 
-    <div id="addFoodModal" class="modal">
+    <article class="page-card foods-table-card">
 
-        <div class="modal-content">
+        <div class="table-scroll">
 
-            <h3>Add Food</h3>
+            <table id="foodTable">
 
-            <label>Search Food</label>
-            <input type="text" id="foodSearchInput" placeholder="Enter food name">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Base Qty</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Carbs</th>
+                        <th>Fat</th>
+                        <th>Fiber</th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+    </article>
+
+    <div id="addFoodModal"
+         class="modal page-modal"
+         aria-hidden="true">
+
+        <div class="modal-content page-modal-content"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="addFoodModalTitle">
+
+            <div class="page-modal-header">
+
+                <div>
+                    <p class="page-eyebrow">USDA search</p>
+                    <h3 id="addFoodModalTitle">Add Food</h3>
+                </div>
+
+                <button class="page-icon-button"
+                        type="button"
+                        onclick="closeAddFoodModal()"
+                        aria-label="Close add food form">
+                    &times;
+                </button>
+
+            </div>
+
+            <div class="form-group">
+                <label for="foodSearchInput">Search Food</label>
+                <input type="text"
+                       id="foodSearchInput"
+                       placeholder="Enter food name">
+            </div>
 
             <div id="foodSearchResults"></div>
 
-            <p id="foodSearchMsg" class="success-msg"></p>
+            <p id="foodSearchMsg" class="page-form-error success-msg"></p>
 
-            <div class="modal-buttons">
-
-                <button onclick="closeAddFoodModal()">
+            <div class="modal-buttons page-form-actions">
+                <button class="page-secondary-button"
+                        type="button"
+                        onclick="closeAddFoodModal()">
                     Cancel
                 </button>
 
-                <button id="submitFoodBtn" onclick="submitSelectedFood()" disabled>
+                <button id="submitFoodBtn"
+                        type="button"
+                        onclick="submitSelectedFood()"
+                        disabled>
                     Add Food
                 </button>
-
             </div>
 
         </div>
@@ -74,49 +115,106 @@
 
 {{if eq .SubPage "meals"}}
 
-<section id="mealsView">
+<section id="mealsView" class="page-section">
 
-    <div class="section-header">
+    <div class="page-header">
 
-        <h1 class="section-title">
-            Meals
-        </h1>
+        <div>
+            <p class="page-eyebrow">Food log</p>
+            <h1 class="section-title">Meals</h1>
+            <p class="page-subtitle">
+                Log what you eat throughout the day.
+            </p>
+        </div>
 
+    </div>
+
+    <div id="mealsPageMessage"
+         class="page-message"
+         role="status">
     </div>
 
     <div class="meals-grid">
 
-        <div class="meal-card">
-            <h3>Breakfast</h3>
+        <article class="meal-card page-card">
+
+            <div class="page-card-header">
+                <div>
+                    <span class="page-label">Meal</span>
+                    <h2>Breakfast</h2>
+                </div>
+            </div>
+
             <div id="breakfastFoods" class="meal-foods"></div>
-            <button onclick="openMealModal('breakfast')">
-                Add Food
-            </button>
-        </div>
 
-        <div class="meal-card">
-            <h3>Lunch</h3>
+            <div class="page-card-actions">
+                <button type="button"
+                        onclick="openMealModal('breakfast')">
+                    + Add Food
+                </button>
+            </div>
+
+        </article>
+
+        <article class="meal-card page-card">
+
+            <div class="page-card-header">
+                <div>
+                    <span class="page-label">Meal</span>
+                    <h2>Lunch</h2>
+                </div>
+            </div>
+
             <div id="lunchFoods" class="meal-foods"></div>
-            <button onclick="openMealModal('lunch')">
-                Add Food
-            </button>
-        </div>
 
-        <div class="meal-card">
-            <h3>Dinner</h3>
+            <div class="page-card-actions">
+                <button type="button"
+                        onclick="openMealModal('lunch')">
+                    + Add Food
+                </button>
+            </div>
+
+        </article>
+
+        <article class="meal-card page-card">
+
+            <div class="page-card-header">
+                <div>
+                    <span class="page-label">Meal</span>
+                    <h2>Dinner</h2>
+                </div>
+            </div>
+
             <div id="dinnerFoods" class="meal-foods"></div>
-            <button onclick="openMealModal('dinner')">
-                Add Food
-            </button>
-        </div>
 
-        <div class="meal-card">
-            <h3>Snacks</h3>
+            <div class="page-card-actions">
+                <button type="button"
+                        onclick="openMealModal('dinner')">
+                    + Add Food
+                </button>
+            </div>
+
+        </article>
+
+        <article class="meal-card page-card">
+
+            <div class="page-card-header">
+                <div>
+                    <span class="page-label">Meal</span>
+                    <h2>Snacks</h2>
+                </div>
+            </div>
+
             <div id="snackFoods" class="meal-foods"></div>
-            <button onclick="openMealModal('snacks')">
-                Add Food
-            </button>
-        </div>
+
+            <div class="page-card-actions">
+                <button type="button"
+                        onclick="openMealModal('snacks')">
+                    + Add Food
+                </button>
+            </div>
+
+        </article>
 
     </div>
 
@@ -124,46 +222,64 @@
 
 {{end}}
 
-<div id="mealModal" class="modal">
+<div id="mealModal"
+     class="modal page-modal"
+     aria-hidden="true">
 
-    <div class="modal-content">
+    <div class="modal-content page-modal-content page-modal-content-sm"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="mealModalTitle">
 
-        <h3>Add Food</h3>
+        <div class="page-modal-header">
 
-        <label>Food Name</label>
-        <input type="text" id="foodNameInput">
+            <div>
+                <p class="page-eyebrow">Daily log</p>
+                <h3 id="mealModalTitle">Add Food</h3>
+            </div>
 
-        <label>Quantity</label>
-        <input type="number" id="quantityInput">
+            <button class="page-icon-button"
+                    type="button"
+                    onclick="closeMealModal()"
+                    aria-label="Close meal form">
+                &times;
+            </button>
 
-        <label>Measurement Type</label>
+        </div>
 
-        <select id="measurementTypeInput">
+        <div class="form-group">
+            <label for="foodNameInput">Food Name</label>
+            <input type="text" id="foodNameInput">
+        </div>
 
-            <option value="gram">
-                Gram
-            </option>
+        <div class="form-group">
+            <label for="quantityInput">Quantity</label>
+            <input type="number" id="quantityInput">
+        </div>
 
-            <option value="unit">
-                Unit
-            </option>
-
-        </select>
+        <div class="form-group">
+            <label for="measurementTypeInput">Measurement Type</label>
+            <select id="measurementTypeInput">
+                <option value="gram">Gram</option>
+                <option value="unit">Unit</option>
+            </select>
+        </div>
 
         <p id="mealSuccessMsg"
-           class="success-msg">
+           class="page-form-error success-msg">
         </p>
 
-        <div class="modal-buttons">
-
-            <button onclick="closeMealModal()">
+        <div class="modal-buttons page-form-actions">
+            <button class="page-secondary-button"
+                    type="button"
+                    onclick="closeMealModal()">
                 Cancel
             </button>
 
-            <button onclick="submitMealItem()">
+            <button type="button"
+                    onclick="submitMealItem()">
                 Submit
             </button>
-
         </div>
 
     </div>

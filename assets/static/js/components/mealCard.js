@@ -6,7 +6,7 @@ function renderMealCard(title, meal){
     cards.forEach(card => {
 
         const heading =
-        card.querySelector("h3")
+        card.querySelector("h2")
 
         if(heading.innerText !== title)
             return
@@ -132,22 +132,27 @@ function renderMealCard(title, meal){
 
 
         /*
-        insert before button
+        insert before actions
         */
 
+        const actions =
+        card.querySelector(".page-card-actions")
+
         const button =
-        card.querySelector("button")
+        actions
+            ? actions.querySelector("button")
+            : card.querySelector("button")
 
 
         card.insertBefore(
             list,
-            button
+            actions || button
         )
 
 
         card.insertBefore(
             total,
-            button
+            actions || button
         )
 
     })

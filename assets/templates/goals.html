@@ -1,72 +1,82 @@
 {{define "content"}}
-<div class="goals-container">
 
-<h2>Goals</h2>
+<section class="page-section goals-page">
 
-<form id="goals-form">
+    <div class="page-header">
 
-<div class="form-group">
-<label>Age</label>
-<input type="number" name="age">
-</div>
+        <div>
+            <p class="page-eyebrow">Personal profile</p>
+            <h1 class="section-title">Goals</h1>
+            <p class="page-subtitle">
+                Set your metrics to calculate maintenance calories and macro targets.
+            </p>
+        </div>
 
-<div class="form-group">
-<label>Gender</label>
-<select name="gender">
-<option>Male</option>
-<option>Female</option>
-</select>
-</div>
+    </div>
 
-<div class="form-group">
-<label>Height (cm)</label>
-<input type="number" name="height_cm">
-</div>
+    <div id="goalsPageMessage"
+         class="page-message"
+         role="status">
+    </div>
 
-<div class="form-group">
-<label>Weight (kg)</label>
-<input type="number" name="weight_kg">
-</div>
+    <article class="page-card goals-form-card">
 
-<div class="form-group form-full">
+        <form id="goals-form">
 
-<label>
-Activity Level
-</label>
+            <div class="page-form-grid goals-form-grid">
 
-<select name="activity_level">
+                <div class="form-group">
+                    <label for="goals-age">Age</label>
+                    <input id="goals-age"
+                           type="number"
+                           name="age">
+                </div>
 
-<option value="sedentary">
-Sedentary
-</option>
+                <div class="form-group">
+                    <label for="goals-gender">Gender</label>
+                    <select id="goals-gender" name="gender">
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
 
-<option value="lightly_active">
-Lightly active
-</option>
+                <div class="form-group">
+                    <label for="goals-height">Height (cm)</label>
+                    <input id="goals-height"
+                           type="number"
+                           name="height_cm">
+                </div>
 
-<option value="moderately_active">
-Moderately active
-</option>
+                <div class="form-group">
+                    <label for="goals-weight">Weight (kg)</label>
+                    <input id="goals-weight"
+                           type="number"
+                           name="weight_kg">
+                </div>
 
-<option value="very_active">
-Very active
-</option>
+                <div class="form-group form-full">
+                    <label for="goals-activity">Activity Level</label>
+                    <select id="goals-activity" name="activity_level">
+                        <option value="sedentary">Sedentary</option>
+                        <option value="lightly_active">Lightly active</option>
+                        <option value="moderately_active">Moderately active</option>
+                        <option value="very_active">Very active</option>
+                        <option value="extra_active">Extra active</option>
+                    </select>
+                </div>
 
-<option value="extra_active">
-Extra active
-</option>
+            </div>
 
-</select>
+            <div class="page-form-actions">
+                <button type="submit">Save Goals</button>
+            </div>
 
-</div>
+        </form>
 
-<button>Save Goals</button>
+        <div id="goals-result" class="goals-result"></div>
 
-</form>
+    </article>
 
-<div id="goals-result"></div>
-
-</div>
-
+</section>
 
 {{end}}

@@ -42,7 +42,7 @@ function updateProgress(
         " left"
 
         bar.style.background =
-        "#2563eb"
+        "var(--accent)"
 
     }
 

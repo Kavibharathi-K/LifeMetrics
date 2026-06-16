@@ -1,30 +1,46 @@
 {{define "content"}}
 
-<div class="dashboard-row">
+<section class="page-section">
 
-    <div class="calories-container">
+    <div class="page-header">
 
-        <span id="calories-value">0</span>
-
-        <p>Calories today</p>
-
-        <div class="progress-bar">
-            <div id="calories-progress" class="progress-fill"></div>
+        <div>
+            <p class="page-eyebrow">Daily overview</p>
+            <h1 class="section-title">Today's Nutrition</h1>
+            <p class="page-subtitle">
+                Track your calories and macros against your goals.
+            </p>
         </div>
-
-        <span id="calories-remaining" class="progress-remaining"></span>
 
     </div>
 
+    <div class="nutrition-dashboard">
 
+        <article class="stat-card page-card">
 
-    <div class="macros-container">
+            <div class="page-card-header">
+                <span class="page-label">Calories</span>
+            </div>
 
-        <div class="macro-card">
+            <div id="calories-value" class="stat-value">0</div>
 
-            <h3>Protein</h3>
+            <p class="stat-caption">Consumed today</p>
 
-            <p id="protein-value">0 g</p>
+            <div class="progress-bar">
+                <div id="calories-progress" class="progress-fill"></div>
+            </div>
+
+            <span id="calories-remaining" class="progress-remaining"></span>
+
+        </article>
+
+        <article class="stat-card page-card">
+
+            <div class="page-card-header">
+                <span class="page-label">Protein</span>
+            </div>
+
+            <p id="protein-value" class="stat-value stat-value-sm">0.0 g</p>
 
             <div class="progress-bar">
                 <div id="protein-progress" class="progress-fill"></div>
@@ -32,15 +48,15 @@
 
             <span id="protein-remaining" class="progress-remaining"></span>
 
-        </div>
+        </article>
 
+        <article class="stat-card page-card">
 
+            <div class="page-card-header">
+                <span class="page-label">Carbs</span>
+            </div>
 
-        <div class="macro-card">
-
-            <h3>Carbs</h3>
-
-            <p id="carbs-value">0 g</p>
+            <p id="carbs-value" class="stat-value stat-value-sm">0.0 g</p>
 
             <div class="progress-bar">
                 <div id="carbs-progress" class="progress-fill"></div>
@@ -48,15 +64,15 @@
 
             <span id="carbs-remaining" class="progress-remaining"></span>
 
-        </div>
+        </article>
 
+        <article class="stat-card page-card">
 
+            <div class="page-card-header">
+                <span class="page-label">Fat</span>
+            </div>
 
-        <div class="macro-card">
-
-            <h3>Fat</h3>
-
-            <p id="fat-value">0 g</p>
+            <p id="fat-value" class="stat-value stat-value-sm">0.0 g</p>
 
             <div class="progress-bar">
                 <div id="fat-progress" class="progress-fill"></div>
@@ -64,15 +80,15 @@
 
             <span id="fat-remaining" class="progress-remaining"></span>
 
-        </div>
+        </article>
 
+        <article class="stat-card page-card">
 
+            <div class="page-card-header">
+                <span class="page-label">Fiber</span>
+            </div>
 
-        <div class="macro-card">
-
-            <h3>Fiber</h3>
-
-            <p id="fiber-value">0 g</p>
+            <p id="fiber-value" class="stat-value stat-value-sm">0.0 g</p>
 
             <div class="progress-bar">
                 <div id="fiber-progress" class="progress-fill"></div>
@@ -80,10 +96,10 @@
 
             <span id="fiber-remaining" class="progress-remaining"></span>
 
-        </div>
+        </article>
 
     </div>
 
-</div>
+</section>
 
 {{end}}

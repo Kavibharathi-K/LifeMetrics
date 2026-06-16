@@ -25,8 +25,8 @@ function openMealModal(mealType){
 
     selectedMealType = mealType
 
-    document.querySelector(
-        "#mealModal h3"
+    document.getElementById(
+        "mealModalTitle"
     ).innerText =
     "Add food to " + mealType
 
@@ -42,20 +42,32 @@ function openMealModal(mealType){
         "quantityInput"
     ).value = ""
 
+    const modal =
     document.getElementById(
         "mealModal"
-    ).style.display =
-    "block"
+    )
+
+    modal.style.display = "flex"
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    )
 
 }
 
 
 function closeMealModal(){
 
+    const modal =
     document.getElementById(
         "mealModal"
-    ).style.display =
-    "none"
+    )
+
+    modal.style.display = "none"
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    )
 
 }
 
@@ -129,8 +141,10 @@ async function submitMealItem(){
         msg.innerText =
         "Successfully logged meal item"
 
-        msg.style.display =
-        "block"
+        setMealsPageMessage(
+            "Food logged successfully.",
+            "success"
+        )
 
 
         setTimeout(() => {
@@ -193,6 +207,30 @@ async function loadMeals(){
             err
         )
 
+    }
+
+}
+
+
+function setMealsPageMessage(
+    message,
+    type = ""
+){
+
+    const element =
+    document.getElementById(
+        "mealsPageMessage"
+    )
+
+    if(!element){
+        return
+    }
+
+    element.textContent = message
+    element.className = "page-message"
+
+    if(type){
+        element.classList.add(type)
     }
 
 }

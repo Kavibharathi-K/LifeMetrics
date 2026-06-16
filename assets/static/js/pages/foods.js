@@ -84,9 +84,16 @@ function showFoodsView(){
 
 function openAddFoodModal() {
 
+    const modal =
     document.getElementById(
         "addFoodModal"
-    ).style.display = "flex"
+    )
+
+    modal.style.display = "flex"
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    )
 
     const input =
     document.getElementById(
@@ -99,9 +106,16 @@ function openAddFoodModal() {
 
 function closeAddFoodModal() {
 
+    const modal =
     document.getElementById(
         "addFoodModal"
-    ).style.display = "none"
+    )
+
+    modal.style.display = "none"
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    )
 
     document.getElementById(
         "foodSearchInput"

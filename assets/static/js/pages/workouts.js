@@ -1067,7 +1067,7 @@ function setWorkoutPageMessage(
 
     element.textContent = message
     element.className =
-    "workout-page-message"
+    "page-message workout-page-message"
 
     if(type){
         element.classList.add(type)

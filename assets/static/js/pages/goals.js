@@ -90,32 +90,24 @@ async function submitGoals(event){
         .getElementById(
             "goals-result"
         )
-
         .innerHTML =
 
         `
-        Targets Saved
-
+        <strong>Targets saved</strong>
         <br><br>
-
-        Calories:
-        ${result.maintenance_calories}
-
+        Calories: ${result.maintenance_calories}
         <br>
-
-        Protein:
-        ${result.protein_goal} g
-
+        Protein: ${result.protein_goal} g
         <br>
-
-        Carbs:
-        ${result.carb_goal} g
-
+        Carbs: ${result.carb_goal} g
         <br>
-
-        Fat:
-        ${result.fat_goal} g
+        Fat: ${result.fat_goal} g
         `
+
+        setGoalsPageMessage(
+            "Your goals were saved successfully.",
+            "success"
+        )
 
     }
     catch(err){
@@ -164,6 +156,30 @@ async function loadMacroGoals(){
             err
         )
 
+    }
+
+}
+
+
+function setGoalsPageMessage(
+    message,
+    type = ""
+){
+
+    const element =
+    document.getElementById(
+        "goalsPageMessage"
+    )
+
+    if(!element){
+        return
+    }
+
+    element.textContent = message
+    element.className = "page-message"
+
+    if(type){
+        element.classList.add(type)
     }
 
 }
