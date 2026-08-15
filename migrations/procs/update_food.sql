@@ -1,20 +1,19 @@
-create or replace procedure update_food(
-    p_food_id int,
-    p_name varchar(150),
-    p_measurement_type varchar(20),
-    p_base_quantity decimal(10,2),
-    p_calories decimal(10,2),
-    p_protein decimal(10,2),
-    p_carbs decimal(10,2),
-    p_fat decimal(10,2),
-    p_fiber decimal(10,2)
+CREATE OR REPLACE PROCEDURE update_food(
+    p_food_id INT,
+    p_name VARCHAR(150),
+    p_measurement_type VARCHAR(20),
+    p_base_quantity DECIMAL(10,2),
+    p_calories DECIMAL(10,2),
+    p_protein DECIMAL(10,2),
+    p_carbs DECIMAL(10,2),
+    p_fat DECIMAL(10,2),
+    p_fiber DECIMAL(10,2)
 )
-
-language plpgsql
-as $$ 
-begin 
-    update foods
-    set
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE foods
+    SET
         name = p_name,
         measurement_type = p_measurement_type,
         base_quantity = p_base_quantity,
@@ -23,11 +22,10 @@ begin
         carbs = p_carbs,
         fat = p_fat,
         fiber = p_fiber
-    where food_id = p_food_id;
+    WHERE food_id = p_food_id;
 
-    if not found then 
-        raise exception 'food with id % not found', p_food_id;
-    end if;
-
-end;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'food with id % not found', p_food_id;
+    END IF;
+END;
 $$;

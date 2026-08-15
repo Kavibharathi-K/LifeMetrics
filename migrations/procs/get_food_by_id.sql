@@ -13,11 +13,8 @@ RETURNS TABLE (
     fiber DECIMAL(10,2),
     created_at TIMESTAMP
 )
-LANGUAGE plpgsql
+LANGUAGE sql
 AS $$
-BEGIN
-
-    RETURN QUERY
     SELECT
         f.food_id,
         f.name,
@@ -31,6 +28,4 @@ BEGIN
         f.created_at
     FROM foods f
     WHERE f.food_id = p_food_id;
-
-END;
 $$;

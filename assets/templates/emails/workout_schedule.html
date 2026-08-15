@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<body>
+    {{if .RestDay}}
+        <h1>Rest day</h1>
+        <p>Today is {{.DayName}}, and there is no workout planned.</p>
+        <p>Use the day to recover well: sleep enough, hydrate, eat your protein, and keep movement light if you feel like it.</p>
+        <p>A good rest day is part of the plan.</p>
+    {{else}}
+        <h1>{{.Schedule.WorkoutName}}</h1>
+        <p>Here is your workout schedule for {{.DayName}}.</p>
+
+        <ol>
+            {{range .Schedule.Exercises}}
+                <li>{{.ExerciseName}}</li>
+            {{else}}
+                <li>No exercises added yet.</li>
+            {{end}}
+        </ol>
+    {{end}}
+</body>
+</html>

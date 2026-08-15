@@ -1,5 +1,10 @@
 PORT=8080
 
+ifneq (,$(wildcard .env))
+include .env
+export
+endif
+
 run:
 	go run ./cmd/server
 

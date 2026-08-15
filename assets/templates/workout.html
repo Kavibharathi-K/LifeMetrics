@@ -12,9 +12,17 @@
             </p>
         </div>
 
-        <button id="openWorkoutModalBtn" type="button">
-            + Add Workout
-        </button>
+        <div class="workout-header-actions">
+            <button id="openWorkoutEmailSettingsBtn"
+                    class="workout-secondary-button"
+                    type="button">
+                Email Settings
+            </button>
+
+            <button id="openWorkoutModalBtn" type="button">
+                + Add Workout
+            </button>
+        </div>
 
     </div>
 
@@ -112,6 +120,71 @@
                 <button id="saveWorkoutBtn"
                         type="submit">
                     Save Workout
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div id="workoutEmailSettingsModal"
+     class="modal workout-modal"
+     aria-hidden="true">
+
+    <div class="modal-content workout-add-exercise-content"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="workoutEmailSettingsTitle">
+
+        <div class="workout-modal-header">
+            <div>
+                <p class="workout-eyebrow">Daily reminder</p>
+                <h3 id="workoutEmailSettingsTitle">Email Settings</h3>
+            </div>
+
+            <button class="workout-icon-button"
+                    type="button"
+                    data-close-email-settings-modal
+                    aria-label="Close email settings">
+                &times;
+            </button>
+        </div>
+
+        <form id="workoutEmailSettingsForm">
+
+            <div class="form-group">
+                <label for="workoutSettingsEmailInput">Email</label>
+                <input id="workoutSettingsEmailInput"
+                       type="email"
+                       maxlength="254"
+                       placeholder="you@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="workoutSettingsEmailTimeInput">Send time</label>
+                <input id="workoutSettingsEmailTimeInput"
+                       type="text"
+                       inputmode="numeric"
+                       maxlength="5"
+                       placeholder="20:30">
+            </div>
+
+            <p id="workoutEmailSettingsError"
+               class="workout-form-error">
+            </p>
+
+            <div class="modal-buttons workout-modal-actions">
+                <button class="workout-secondary-button"
+                        type="button"
+                        data-close-email-settings-modal>
+                    Cancel
+                </button>
+
+                <button id="saveWorkoutEmailSettingsBtn"
+                        type="submit">
+                    Save Settings
                 </button>
             </div>
 

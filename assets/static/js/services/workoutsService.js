@@ -28,6 +28,27 @@ async function getWorkoutSchedules() {
     )
 }
 
+async function getWorkoutEmailSettings() {
+
+    return workoutRequest(
+        "/workouts/email-settings"
+    )
+}
+
+async function updateWorkoutEmailSettings(data) {
+
+    return workoutRequest(
+        "/workouts/email-settings",
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }
+    )
+}
+
 async function createWorkoutSchedule(data) {
 
     return workoutRequest(

@@ -269,6 +269,7 @@ body{
     align-items:flex-start;
     justify-content:space-between;
     gap:12px;
+    margin-bottom:18px;
 }
 
 .page-card-header h2,
@@ -574,7 +575,9 @@ body{
 }
 
 .meal-card{
-    min-height:300px;
+    height:420px;
+    display:flex;
+    flex-direction:column;
 }
 
 .meal-card:nth-child(1){
@@ -729,34 +732,75 @@ input:focus{
 
 
 .meal-food-list::-webkit-scrollbar{
-    width:4px;
+    display: none;              /* Chrome, Safari, Edge */
+}
+.meal-hero{
+    margin-bottom:24px;
+    padding-bottom:16px;
+    border-bottom:1px solid var(--border-color);
 }
 
-.meal-food-list::-webkit-scrollbar-thumb{
-    background:var(--border-color);
-    border-radius:10px;
+.meal-hero-value{
+    font-size:34px;
+    font-weight:700;
+    line-height:1;
+    color:var(--accent);
 }
+
+.meal-hero-label{
+    margin-top:6px;
+    font-size:12px;
+    color:var(--text-secondary);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+
+.meal-total{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top:14px;
+    margin-top:14px;
+    border-top:1px solid var(--border-color);
+}
+
+.meal-total div:first-child{
+    color:var(--text-secondary);
+    font-size:13px;
+    font-weight:600;
+}
+
+.meal-total div:last-child{
+    font-size:18px;
+    font-weight:700;
+}
+
 
 .meal-foods{
     flex:1;
     display:flex;
     flex-direction:column;
-    min-height:120px;
+    justify-content:flex-start;
+    overflow:hidden;
+    min-height:0;
+    margin-top:20px;
 }
 
 .meal-food-list{
     flex:1;
     overflow-y:auto;
-    margin:12px 0 8px;
+    min-height:0;
+    margin:0;
     padding-right:4px;
-    max-height:140px;
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;
 }
 
 .meal-food-row{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:6px 0;
+    padding:10px 0;
     font-size:14px;
 }
 
@@ -769,23 +813,38 @@ input:focus{
     color:var(--text-primary);
 }
 
-.meal-food-qty{
-    font-size:12px;
-    color:var(--text-secondary);
-}
-
-.meal-food-cal{
+.meal-food-name{
+    font-size:15px;
     font-weight:600;
     color:var(--text-primary);
 }
 
+.meal-food-cal{
+    font-size:15px;
+    font-weight:700;
+    color:var(--accent);
+}
+
 .meal-total{
     display:flex;
+    align-items:flex-end;
     justify-content:space-between;
-    padding-top:8px;
-    margin-top:6px;
+    padding-top:14px;
+    margin-top:14px;
     border-top:1px solid var(--border-color);
+}
+
+.meal-total div:first-child{
+    color:var(--text-secondary);
+    font-size:13px;
     font-weight:600;
+}
+
+.meal-total div:last-child{
+    color:var(--text-primary);
+    font-size:28px;
+    font-weight:700;
+    line-height:1;
 }
 
 .meal-empty{
@@ -908,6 +967,13 @@ button:disabled{
     display:grid;
     grid-template-columns:repeat(3, minmax(0, 1fr));
     gap:18px;
+}
+
+.workout-header-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
 }
 
 .workout-day-card{
@@ -1131,6 +1197,11 @@ button:disabled{
     .page-header button,
     .workout-page-header button{
         width:100%;
+    }
+
+    .workout-header-actions{
+        width:100%;
+        flex-direction:column;
     }
 
     .nutrition-dashboard,

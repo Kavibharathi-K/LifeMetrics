@@ -11,21 +11,15 @@ function renderMealCard(title, meal){
         if(heading.innerText !== title)
             return
 
+        const mealContainer = card.querySelector(".meal-foods")
+        if(!mealContainer) return
+
 
         /*
         remove previous render
         */
 
-        const oldList =
-        card.querySelector(".meal-food-list")
-
-        if(oldList) oldList.remove()
-
-
-        const oldTotal =
-        card.querySelector(".meal-total")
-
-        if(oldTotal) oldTotal.remove()
+        mealContainer.innerHTML = ""
 
 
         /*
@@ -39,6 +33,27 @@ function renderMealCard(title, meal){
         "meal-food-list"
 
 
+        const hero =
+        document.createElement("div")
+
+        hero.className =
+        "meal-hero"
+
+        hero.innerHTML = `
+
+            <div class="meal-hero-value">
+
+                ${Math.round(meal.totals.calories)}
+
+            </div>
+
+            <div class="meal-hero-label">
+
+                kcal today
+
+            </div>
+
+        `
 
         /*
         if no foods
@@ -116,14 +131,13 @@ function renderMealCard(title, meal){
         total.className =
         "meal-total"
 
-
         total.innerHTML = `
 
-            <div>Total</div>
+            <div>Total Foods</div>
 
             <div>
 
-                ${Math.round(meal.totals.calories)} kcal
+                ${meal.foods ? meal.foods.length : 0}
 
             </div>
 
@@ -131,29 +145,9 @@ function renderMealCard(title, meal){
 
 
 
-        /*
-        insert before actions
-        */
-
-        const actions =
-        card.querySelector(".page-card-actions")
-
-        const button =
-        actions
-            ? actions.querySelector("button")
-            : card.querySelector("button")
-
-
-        card.insertBefore(
-            list,
-            actions || button
-        )
-
-
-        card.insertBefore(
-            total,
-            actions || button
-        )
+       mealContainer.appendChild(hero)
+       mealContainer.appendChild(list)
+       mealContainer.appendChild(total)
 
     })
 

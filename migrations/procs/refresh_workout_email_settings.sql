@@ -1,0 +1,2 @@
+DROP FUNCTION IF EXISTS create_workout_schedule(SMALLINT, TEXT, TEXT, TEXT, TEXT[]);
+DROP PROCEDURE IF EXISTS update_workout_schedule(INT, SMALLINT, TEXT, TEXT, TEXT, TEXT[]);

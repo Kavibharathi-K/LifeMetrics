@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"net/mail"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -26,6 +28,8 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 	handler := NewHandler(repo)
 
 	r.Route("/workouts", func(r chi.Router) {
+		r.Get("/email-settings", handler.GetWorkoutEmailSettings)
+		r.Put("/email-settings", handler.UpdateWorkoutEmailSettings)
 		r.Get("/schedules", handler.ListWorkoutSchedules)
 		r.Get("/schedules/{day_of_week}", handler.GetWorkoutScheduleByDay)
 		r.Post("/schedules", handler.CreateWorkoutSchedule)
@@ -33,6 +37,49 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 		r.Delete("/schedules/{workout_schedule_id}", handler.DeleteWorkoutSchedule)
 		r.Post("/schedules/{workout_schedule_id}/exercises", handler.CreateWorkoutScheduleExercise)
 	})
+}
+
+func (h *Handler) GetWorkoutEmailSettings(w http.ResponseWriter, r *http.Request) {
+	settings, err := h.Repo.GetWorkoutEmailSettings(r.Context())
+	if errors.Is(err, pgx.ErrNoRows) {
+		writeJSON(w, http.StatusOK, WorkoutEmailSettings{})
+		return
+	}
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to get workout email settings")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, settings)
+}
+
+func (h *Handler) UpdateWorkoutEmailSettings(w http.ResponseWriter, r *http.Request) {
+	var request UpdateWorkoutEmailSettingsRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid JSON request")
+		return
+	}
+
+	request.Email = strings.TrimSpace(request.Email)
+	request.EmailTime = strings.TrimSpace(request.EmailTime)
+
+	if err := validateWorkoutEmailSettings(request.Email, request.EmailTime); err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	settings := WorkoutEmailSettings{
+		Email:     request.Email,
+		EmailTime: request.EmailTime,
+	}
+
+	if err := h.Repo.UpdateWorkoutEmailSettings(r.Context(), &settings); err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to update workout email settings")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, settings)
 }
 
 // List whole week workout schedule.
@@ -179,6 +226,23 @@ func (h *Handler) UpdateWorkoutSchedule(w http.ResponseWriter, r *http.Request) 
 		WorkoutName:       schedule.WorkoutName,
 		Exercises:         request.Exercises,
 	})
+}
+
+func validateWorkoutEmailSettings(email string, emailTime string) error {
+	if email == "" && emailTime == "" {
+		return nil
+	}
+	if email == "" || emailTime == "" {
+		return errors.New("email and email_time must be provided together")
+	}
+	if _, err := mail.ParseAddress(email); err != nil {
+		return errors.New("email must be valid")
+	}
+	if _, err := time.Parse("15:04", emailTime); err != nil {
+		return errors.New("email_time must use HH:MM format")
+	}
+
+	return nil
 }
 
 // Deletes the workout schedule

@@ -143,3 +143,47 @@ func (r *Repository) DeleteWorkoutSchedule(
 
 	return deleted, err
 }
+
+func (r *Repository) GetWorkoutEmailSettings(ctx context.Context) (WorkoutEmailSettings, error) {
+	var settings WorkoutEmailSettings
+
+	err := r.DB.QueryRow(
+		ctx,
+		`
+			SELECT email, email_time, updated_at
+			FROM workout_email_settings
+			WHERE workout_email_settings_id = 1
+		`,
+	).Scan(
+		&settings.Email,
+		&settings.EmailTime,
+		&settings.UpdatedAt,
+	)
+
+	return settings, err
+}
+
+func (r *Repository) UpdateWorkoutEmailSettings(
+	ctx context.Context,
+	settings *WorkoutEmailSettings,
+) error {
+	return r.DB.QueryRow(
+		ctx,
+		`
+			INSERT INTO workout_email_settings (
+				workout_email_settings_id,
+				email,
+				email_time
+			)
+			VALUES (1, $1, $2)
+			ON CONFLICT (workout_email_settings_id)
+			DO UPDATE SET
+				email = EXCLUDED.email,
+				email_time = EXCLUDED.email_time,
+				updated_at = CURRENT_TIMESTAMP
+			RETURNING updated_at
+		`,
+		settings.Email,
+		settings.EmailTime,
+	).Scan(&settings.UpdatedAt)
+}

@@ -12,21 +12,18 @@ RETURNS TABLE (
     created_at TIMESTAMP
 )
 LANGUAGE sql
-AS
-$$
-
-SELECT
-    food_id,
-    name,
-    measurement_type,
-    base_quantity,
-    calories,
-    protein,
-    carbs,
-    fat,
-    fiber,
-    created_at
-FROM foods
-ORDER BY name;
-
+AS $$
+    SELECT
+        food_id,
+        name,
+        measurement_type,
+        base_quantity,
+        calories,
+        protein,
+        carbs,
+        fat,
+        fiber,
+        created_at
+    FROM foods
+    ORDER BY name;
 $$;

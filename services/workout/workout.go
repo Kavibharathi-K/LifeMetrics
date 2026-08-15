@@ -10,6 +10,17 @@ type WorkoutSchedule struct {
 	UpdatedAt         time.Time `db:"updated_at" json:"updated_at"`
 }
 
+type WorkoutEmailSettings struct {
+	Email     string    `db:"email" json:"email"`
+	EmailTime string    `db:"email_time" json:"email_time"`
+	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
+}
+
+type UpdateWorkoutEmailSettingsRequest struct {
+	Email     string `json:"email"`
+	EmailTime string `json:"email_time"`
+}
+
 type WorkoutScheduleExercises struct {
 	WorkoutScheduleExerciseId int       `db:"workout_schedule_exercise_id" json:"workout_schedule_exercise_id"`
 	WorkoutScheduleId         int       `db:"workout_schedule_id" json:"workout_schedule_id"`

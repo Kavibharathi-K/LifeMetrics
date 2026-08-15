@@ -36,6 +36,12 @@ func main() {
 	user_metrics.RegisterRoutes(r, db)
 	usda.RegisterRoutes(r)
 	workout.RegisterRoutes(r, db)
+	workoutRepo := workout.NewRepository(db)
+	workoutService := workout.NewWorkoutService(
+		workoutRepo,
+		workout.NewEmailService(),
+	)
+	workout.StartWorkoutScheduler(workoutService)
 
 	log.Println("=======================")
 	log.Println("Life Metrics is running")

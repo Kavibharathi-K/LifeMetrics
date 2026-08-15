@@ -144,7 +144,7 @@ async function loadMacroGoals(){
             data.fat_goal,
 
             fiber:
-            data.fiber_goal || 30
+            data.fiber_goal || 35
 
         }
 

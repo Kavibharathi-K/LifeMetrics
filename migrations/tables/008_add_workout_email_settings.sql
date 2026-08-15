@@ -1,0 +1,2 @@
+-- Kept so databases that already recorded this migration remain in sync.
+-- Workout email settings now live in workout_email_settings.

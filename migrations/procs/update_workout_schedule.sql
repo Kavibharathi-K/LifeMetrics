@@ -26,7 +26,7 @@ BEGIN
 
     INSERT INTO workout_schedule_exercises (
         workout_schedule_id,
-        exercise_name, 
+        exercise_name,
         exercise_order
     )
     SELECT

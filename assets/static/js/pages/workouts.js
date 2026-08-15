@@ -9,6 +9,10 @@ const workoutDays = [
 ]
 
 let workoutSchedules = []
+let workoutEmailSettings = {
+    email: "",
+    email_time: ""
+}
 let workoutPageInitialized = false
 
 function initializeWorkoutPage() {
@@ -37,6 +41,14 @@ function initializeWorkoutPage() {
     )
 
     document.getElementById(
+        "openWorkoutEmailSettingsBtn"
+    )
+    .addEventListener(
+        "click",
+        openWorkoutEmailSettingsModal
+    )
+
+    document.getElementById(
         "addExerciseInputBtn"
     )
     .addEventListener(
@@ -58,6 +70,14 @@ function initializeWorkoutPage() {
     .addEventListener(
         "submit",
         submitWorkoutExercise
+    )
+
+    document.getElementById(
+        "workoutEmailSettingsForm"
+    )
+    .addEventListener(
+        "submit",
+        submitWorkoutEmailSettings
     )
 
     document
@@ -84,6 +104,17 @@ function initializeWorkoutPage() {
 
     document
     .querySelectorAll(
+        "[data-close-email-settings-modal]"
+    )
+    .forEach(button => {
+        button.addEventListener(
+            "click",
+            closeWorkoutEmailSettingsModal
+        )
+    })
+
+    document
+    .querySelectorAll(
         ".workout-modal"
     )
     .forEach(modal => {
@@ -93,6 +124,7 @@ function initializeWorkoutPage() {
                 if(event.target === modal){
                     closeWorkoutModal()
                     closeWorkoutExerciseModal()
+                    closeWorkoutEmailSettingsModal()
                 }
             }
         )
@@ -104,6 +136,7 @@ function initializeWorkoutPage() {
             if(event.key === "Escape"){
                 closeWorkoutModal()
                 closeWorkoutExerciseModal()
+                closeWorkoutEmailSettingsModal()
             }
         }
     )
@@ -131,9 +164,23 @@ async function loadWorkoutSchedules() {
 
     try{
 
-        workoutSchedules =
-        await getWorkoutSchedules()
+        const [
+            schedules,
+            emailSettings
+        ] =
+        await Promise.all([
+            getWorkoutSchedules(),
+            getWorkoutEmailSettings()
+        ])
 
+        workoutSchedules = schedules
+        workoutEmailSettings =
+        emailSettings || {
+            email: "",
+            email_time: ""
+        }
+
+        renderWorkoutEmailSettingsAction()
         renderWorkoutSchedules()
 
     }
@@ -156,6 +203,24 @@ async function loadWorkoutSchedules() {
         )
 
     }
+}
+
+function renderWorkoutEmailSettingsAction() {
+
+    const button =
+    document.getElementById(
+        "openWorkoutEmailSettingsBtn"
+    )
+
+    if(!button){
+        return
+    }
+
+    button.textContent =
+    workoutEmailSettings.email &&
+    workoutEmailSettings.email_time
+        ? `Email ${workoutEmailSettings.email_time}`
+        : "Email Settings"
 }
 
 function renderWorkoutSchedules() {
@@ -521,6 +586,147 @@ function closeWorkoutModal() {
         "aria-hidden",
         "true"
     )
+}
+
+function openWorkoutEmailSettingsModal() {
+
+    document.getElementById(
+        "workoutSettingsEmailInput"
+    ).value =
+    workoutEmailSettings.email || ""
+
+    document.getElementById(
+        "workoutSettingsEmailTimeInput"
+    ).value =
+    workoutEmailSettings.email_time || ""
+
+    document.getElementById(
+        "workoutEmailSettingsError"
+    ).textContent = ""
+
+    setWorkoutEmailSettingsButtonLoading(false)
+
+    const modal =
+    document.getElementById(
+        "workoutEmailSettingsModal"
+    )
+
+    modal.style.display = "flex"
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    )
+
+    setTimeout(
+        () => {
+            document.getElementById(
+                "workoutSettingsEmailInput"
+            ).focus()
+        },
+        0
+    )
+}
+
+function closeWorkoutEmailSettingsModal() {
+
+    const modal =
+    document.getElementById(
+        "workoutEmailSettingsModal"
+    )
+
+    if(!modal){
+        return
+    }
+
+    modal.style.display = "none"
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    )
+}
+
+async function submitWorkoutEmailSettings(event) {
+
+    event.preventDefault()
+
+    const email =
+    document.getElementById(
+        "workoutSettingsEmailInput"
+    ).value.trim()
+
+    const emailTime =
+    normalizeWorkoutEmailTime(
+        document.getElementById(
+            "workoutSettingsEmailTimeInput"
+        ).value
+    )
+
+    if((email && !emailTime) || (!email && emailTime)){
+        setWorkoutEmailSettingsError(
+            "Enter both email and send time."
+        )
+        return
+    }
+
+    if(emailTime && !/^\d{2}:\d{2}$/.test(emailTime)){
+        setWorkoutEmailSettingsError(
+            "Use HH:MM time, like 20:30."
+        )
+        return
+    }
+
+    setWorkoutEmailSettingsError("")
+    setWorkoutEmailSettingsButtonLoading(true)
+
+    try{
+
+        workoutEmailSettings =
+        await updateWorkoutEmailSettings({
+            email:
+            email,
+            email_time:
+            emailTime
+        })
+
+        closeWorkoutEmailSettingsModal()
+        renderWorkoutEmailSettingsAction()
+
+        setWorkoutPageMessage(
+            workoutEmailSettings.email
+                ? "Workout email settings saved."
+                : "Workout email reminders disabled.",
+            "success"
+        )
+
+    }
+    catch(error){
+
+        setWorkoutEmailSettingsError(
+            error.message
+        )
+
+    }
+    finally{
+
+        setWorkoutEmailSettingsButtonLoading(false)
+
+    }
+}
+
+function normalizeWorkoutEmailTime(value) {
+
+    const trimmed =
+    value.trim()
+
+    if(trimmed === ""){
+        return ""
+    }
+
+    if(/^\d{4}$/.test(trimmed)){
+        return `${trimmed.slice(0, 2)}:${trimmed.slice(2)}`
+    }
+
+    return trimmed
 }
 
 function populateWorkoutDayOptions(
@@ -1049,6 +1255,36 @@ function setWorkoutFormError(
         "workoutFormError"
     ).textContent =
     message
+}
+
+function setWorkoutEmailSettingsError(
+    message
+) {
+
+    document.getElementById(
+        "workoutEmailSettingsError"
+    ).textContent =
+    message
+}
+
+function setWorkoutEmailSettingsButtonLoading(
+    loading
+) {
+
+    const button =
+    document.getElementById(
+        "saveWorkoutEmailSettingsBtn"
+    )
+
+    if(!button){
+        return
+    }
+
+    button.disabled = loading
+    button.textContent =
+    loading
+        ? "Saving..."
+        : "Save Settings"
 }
 
 function setWorkoutPageMessage(
