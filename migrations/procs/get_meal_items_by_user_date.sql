@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_meals_by_date(
+CREATE OR REPLACE FUNCTION get_meal_items_by_user_date(
     p_user_id BIGINT,
     p_date DATE
 )
@@ -30,21 +30,31 @@ AS $$
         m.total_carbs,
         m.total_fat,
         m.total_fiber,
+
         f.food_id,
         f.name,
         f.measurement_type,
+
         mi.quantity,
         mi.calories,
         mi.protein,
         mi.carbs,
         mi.fat,
         mi.fiber
+
     FROM meals m
+
     LEFT JOIN meal_items mi
         ON mi.meal_id = m.meal_id
+
     LEFT JOIN foods f
         ON f.food_id = mi.food_id
+
     WHERE m.user_id = p_user_id
       AND m.meal_date = p_date
-    ORDER BY m.meal_type;
+
+    ORDER BY
+        m.meal_type,
+        m.meal_id,
+        f.name;
 $$;

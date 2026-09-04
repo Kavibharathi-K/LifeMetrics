@@ -11,7 +11,8 @@ var activityMultiplier = map[string]float64{
 }
 
 type UserMetrics struct {
-	Id int `db:"id" json:"id"`
+	Id     int   `db:"id" json:"id"`
+	UserId int64 `db:"user_id" json:"-"`
 
 	Age    int    `db:"age" json:"age"`
 	Gender string `db:"gender" json:"gender"`
@@ -29,8 +30,6 @@ type UserMetrics struct {
 
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
-
-
 
 func CalculateMaintenanceCalories(age int, gender string, heightCm float64, weightKg float64, activityLevel string) int {
 

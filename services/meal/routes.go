@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Kavibharathi-K/lifemetrics/services/auth"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -23,14 +24,25 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 	handler := NewHandler(repo)
 
 	r.Route("/meals", func(r chi.Router) {
+		r.Use(auth.AuthMiddleware)
 		r.Get("/gettodaynutrition", handler.GetTodayNutrition)
 		r.Get("/getmealsbydate", handler.GetMealsByDate)
 	})
 }
 
 func (h *Handler) GetTodayNutrition(w http.ResponseWriter, r *http.Request) {
+	userID, err := auth.GetUserID(r.Context())
+
+	if err != nil {
+		http.Error(
+			w,
+			"unauthorized",
+			http.StatusUnauthorized,
+		)
+		return
+	}
 	var todayMeals []TodayNutrition
-	todayMeals, err := h.Repo.GetTodayNutrition(r.Context())
+	todayMeals, err = h.Repo.GetTodayNutrition(r.Context(), userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -41,6 +53,18 @@ func (h *Handler) GetTodayNutrition(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetMealsByDate(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := auth.GetUserID(r.Context())
+
+	if err != nil {
+		http.Error(
+			w,
+			"unauthorized",
+			http.StatusUnauthorized,
+		)
+		return
+	}
+
 	date := r.URL.Query().Get("date")
 
 	if date == "" {
@@ -53,6 +77,7 @@ func (h *Handler) GetMealsByDate(w http.ResponseWriter, r *http.Request) {
 	response, err :=
 		h.Repo.GetMealsByDate(
 			r.Context(),
+			userID,
 			date,
 		)
 

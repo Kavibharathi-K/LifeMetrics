@@ -16,11 +16,11 @@ func NewRepository(db *pgxpool.Pool) *Repository {
 	return &Repository{DB: db}
 }
 
-func (r *Repository) GetTodayNutrition(ctx context.Context) ([]TodayNutrition, error) {
+func (r *Repository) GetTodayNutrition(ctx context.Context, userID int64) ([]TodayNutrition, error) {
 	today := time.Now().Format("2006-01-02")
 
-	query := `select * from get_today_nutrition($1)`
-	rows, err := r.DB.Query(ctx, query, today)
+	query := `select * from get_today_nutrition($1, $2)`
+	rows, err := r.DB.Query(ctx, query, userID, today)
 	if err != nil {
 		return nil, err
 	}
@@ -45,10 +45,11 @@ func (r *Repository) GetTodayNutrition(ctx context.Context) ([]TodayNutrition, e
 
 }
 
-func (r *Repository) GetMealsByDate(ctx context.Context, date string) (MealsResponse, error) {
+func (r *Repository) GetMealsByDate(ctx context.Context, userID int64, date string) (MealsResponse, error) {
 
 	rows, err := r.DB.Query(ctx,
-		`SELECT * FROM get_meals_by_date($1)`,
+		`SELECT * FROM get_meals_by_date($1, $2)`,
+		userID,
 		date,
 	)
 

@@ -1,5 +1,6 @@
 CREATE OR REPLACE PROCEDURE update_workout_schedule(
     p_workout_schedule_id INT,
+    p_user_id INT,
     p_day_of_week SMALLINT,
     p_workout_name TEXT,
     p_exercises TEXT[]
@@ -12,7 +13,8 @@ BEGIN
         day_of_week = p_day_of_week,
         workout_name = TRIM(p_workout_name),
         updated_at = CURRENT_TIMESTAMP
-    WHERE workout_schedule_id = p_workout_schedule_id;
+    WHERE workout_schedule_id = p_workout_schedule_id
+      AND user_id = p_user_id;
 
     IF NOT FOUND THEN
         RAISE EXCEPTION

@@ -1,4 +1,5 @@
 CREATE OR REPLACE FUNCTION get_workout_schedule_by_day(
+    p_user_id INT,
     p_day_of_week SMALLINT
 )
 RETURNS TABLE (
@@ -36,7 +37,8 @@ AS $$
     FROM workout_schedules ws
     LEFT JOIN workout_schedule_exercises wse
         ON wse.workout_schedule_id = ws.workout_schedule_id
-    WHERE ws.day_of_week = p_day_of_week
+    WHERE ws.user_id = p_user_id
+      AND ws.day_of_week = p_day_of_week
     GROUP BY
         ws.workout_schedule_id,
         ws.day_of_week,

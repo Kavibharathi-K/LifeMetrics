@@ -7,7 +7,9 @@ import (
 	"os"
 
 	"github.com/Kavibharathi-K/lifemetrics/database"
+	"github.com/Kavibharathi-K/lifemetrics/services/auth"
 	"github.com/Kavibharathi-K/lifemetrics/services/food"
+	"github.com/Kavibharathi-K/lifemetrics/services/health"
 	"github.com/Kavibharathi-K/lifemetrics/services/meal"
 	"github.com/Kavibharathi-K/lifemetrics/services/meal_item"
 	"github.com/Kavibharathi-K/lifemetrics/services/usda"
@@ -36,6 +38,8 @@ func main() {
 	user_metrics.RegisterRoutes(r, db)
 	usda.RegisterRoutes(r)
 	workout.RegisterRoutes(r, db)
+	health.RegisterRoutes(r)
+	auth.RegisterRoutes(r, db)
 	workoutRepo := workout.NewRepository(db)
 	workoutService := workout.NewWorkoutService(
 		workoutRepo,

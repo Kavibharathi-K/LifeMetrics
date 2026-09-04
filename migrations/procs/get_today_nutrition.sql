@@ -1,4 +1,5 @@
 CREATE OR REPLACE FUNCTION get_today_nutrition(
+    p_user_id BIGINT,
     p_date DATE DEFAULT CURRENT_DATE
 )
 RETURNS TABLE (
@@ -17,5 +18,6 @@ AS $$
         COALESCE(SUM(m.total_fat), 0) AS total_fat,
         COALESCE(SUM(m.total_fiber), 0) AS total_fiber
     FROM meals m
-    WHERE m.meal_date = p_date;
+    WHERE m.user_id = p_user_id
+      AND m.meal_date = p_date;
 $$;
