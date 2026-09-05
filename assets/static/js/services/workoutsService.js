@@ -1,110 +1,77 @@
-async function workoutRequest(url, options = {}) {
+async function getWorkoutSchedules(){
 
-    const response =
-    await fetch(url, options)
-
-    if(response.status === 204){
-        return null
-    }
-
-    const data =
-    await response.json()
-    .catch(() => ({}))
-
-    if(!response.ok){
-        throw new Error(
-            data.error ||
-            "Workout request failed"
-        )
-    }
-
-    return data
-}
-
-async function getWorkoutSchedules() {
-
-    return workoutRequest(
+    return apiGet(
         "/workouts/schedules"
     )
+
 }
 
-async function getWorkoutEmailSettings() {
 
-    return workoutRequest(
+async function getWorkoutEmailSettings(){
+
+    return apiGet(
         "/workouts/email-settings"
     )
+
 }
 
-async function updateWorkoutEmailSettings(data) {
 
-    return workoutRequest(
+async function updateWorkoutEmailSettings(
+    data
+){
+
+    return apiPut(
         "/workouts/email-settings",
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        }
+        data
     )
+
 }
 
-async function createWorkoutSchedule(data) {
 
-    return workoutRequest(
+async function createWorkoutSchedule(
+    data
+){
+
+    return apiPost(
         "/workouts/schedules",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        }
+        data
     )
+
 }
+
 
 async function updateWorkoutSchedule(
     workoutScheduleId,
     data
-) {
+){
 
-    return workoutRequest(
+    return apiPut(
         `/workouts/schedules/${workoutScheduleId}`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        }
+        data
     )
+
 }
+
 
 async function addWorkoutScheduleExercise(
     workoutScheduleId,
     data
-) {
+){
 
-    return workoutRequest(
+    return apiPost(
         `/workouts/schedules/${workoutScheduleId}/exercises`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        }
+        data
     )
+
 }
+
 
 async function deleteWorkoutSchedule(
     workoutScheduleId
-) {
+){
 
-    return workoutRequest(
-        `/workouts/schedules/${workoutScheduleId}`,
-        {
-            method: "DELETE"
-        }
+    return apiDelete(
+        `/workouts/schedules/${workoutScheduleId}`
     )
+
 }

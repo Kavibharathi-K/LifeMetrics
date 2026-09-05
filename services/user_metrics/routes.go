@@ -78,6 +78,11 @@ func (h *Handler) CreateUserMetrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set(
+
+		"Content-Type",
+		"application/json",
+	)
 	json.NewEncoder(w).Encode(
 
 		map[string]interface{}{
@@ -121,7 +126,12 @@ func (h *Handler) GetLatestUserMetrics(
 
 		return
 	}
+	w.Header().Set(
 
+		"Content-Type",
+
+		"application/json",
+	)
 	json.NewEncoder(w).
 		Encode(data)
 }

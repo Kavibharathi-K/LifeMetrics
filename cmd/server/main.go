@@ -53,6 +53,8 @@ func main() {
 
 	// pages
 	r.Get("/", HomePage)
+	r.Get("/login", LoginPage)
+	r.Get("/register", RegisterPage)
 	r.Get("/food", FoodPage)
 	r.Get("/meals", MealsPage)
 	r.Get("/goals", GoalsPage)

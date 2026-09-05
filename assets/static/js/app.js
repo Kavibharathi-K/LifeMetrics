@@ -10,6 +10,30 @@ window.onload = function(){
         subPage
     )
 
+    if(
+
+    subPage === "today" ||
+
+    subPage === "goals" ||
+
+    subPage === "foods" ||
+
+    subPage === "meals" ||
+
+    subPage === "workout"
+
+){
+
+    if(!isAuthenticated()){
+
+        window.location.href = "/login"
+
+        return
+
+    }
+
+}
+
 
     if(subPage === "today"){
 

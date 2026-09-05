@@ -44,6 +44,36 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "home.html", data)
 }
 
+func LoginPage(w http.ResponseWriter, r *http.Request) {
+
+	tmpl := template.Must(
+		template.ParseFiles(
+			"assets/templates/login.html",
+		),
+	)
+
+	tmpl.ExecuteTemplate(
+		w,
+		"login",
+		nil,
+	)
+}
+
+func RegisterPage(w http.ResponseWriter, r *http.Request) {
+
+	tmpl := template.Must(
+		template.ParseFiles(
+			"assets/templates/register.html",
+		),
+	)
+
+	tmpl.ExecuteTemplate(
+		w,
+		"register",
+		nil,
+	)
+}
+
 
 // Available Foods page
 func FoodPage(w http.ResponseWriter, r *http.Request) {
