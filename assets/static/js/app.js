@@ -2,12 +2,38 @@ window.onload = function(){
 
     initializeTheme()
 
+    const logoutButton =
+
+    document.getElementById("logoutButton")
+
+    if(logoutButton){
+
+        logoutButton.addEventListener(
+
+            "click",
+
+            function(){
+
+                logout()
+
+                window.location.href = "/login"
+
+            }
+
+        )
+
+    }
+
     const subPage =
+
     document.body.dataset.subpage
 
     console.log(
+
         "SubPage:",
+
         subPage
+
     )
 
     if(

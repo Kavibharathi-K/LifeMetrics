@@ -59,6 +59,13 @@ body{
     height:64px;
 }
 
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-left:auto;
+}
+
 .logo{
     font-size:22px;
     font-weight:600;
