@@ -38,7 +38,7 @@ func main() {
 	user_metrics.RegisterRoutes(r, db)
 	usda.RegisterRoutes(r)
 	workout.RegisterRoutes(r, db)
-	health.RegisterRoutes(r)
+	health.RegisterRoutes(r, db)
 	auth.RegisterRoutes(r, db)
 	workoutRepo := workout.NewRepository(db)
 	workoutService := workout.NewWorkoutService(
