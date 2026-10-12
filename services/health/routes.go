@@ -36,9 +36,6 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 			handler.TestTokenHandler,
 		)
 
-		r.With(auth.AuthMiddleware).Get(
-			"/test-steps",
-			handler.TestStepsHandler,
-		)
+		r.With(auth.AuthMiddleware).Post("/sync-daily-activity", handler.SyncDailyActivity)
 	})
 }

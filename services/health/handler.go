@@ -216,26 +216,20 @@ func (h *Handler) TestTokenHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Access Token:", accessToken)
 }
 
-func (h *Handler) TestStepsHandler(w http.ResponseWriter, r *http.Request) {
-	userID, err := auth.GetUserID(r.Context())
+func (h *Handler) SyncDailyActivity(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	userID, err := auth.GetUserID(ctx)
 	if err != nil {
-		http.Error(
-			w,
-			"authenticated user not found",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	body, err := h.GetSteps(
-		r.Context(),
-		userID,
-	)
-
-	if err != nil {
+	// Synchronize daily activity data from Google Health.
+	if err := h.SyncDailyActivityData(ctx, userID); err != nil {
 		http.Error(
 			w,
-			err.Error(),
+			fmt.Sprintf("Failed to sync daily activity: %v", err),
 			http.StatusInternalServerError,
 		)
 		return
@@ -243,5 +237,6 @@ func (h *Handler) TestStepsHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(body)
+
+	_, _ = w.Write([]byte(`{"message":"Daily activity synchronized successfully"}`))
 }

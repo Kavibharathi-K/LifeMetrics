@@ -68,27 +68,27 @@ func (r *Repository) DeleteOAuthState(
 }
 
 func (r *Repository) UpsertHealthConnection(
-    ctx context.Context,
-    userID int64,
-    provider string,
-    providerUserID string,
-    accessToken string,
-    refreshToken string,
-    expiresAt time.Time,
+	ctx context.Context,
+	userID int64,
+	provider string,
+	providerUserID string,
+	accessToken string,
+	refreshToken string,
+	expiresAt time.Time,
 ) error {
 
-    _, err := r.DB.Exec(
-        ctx,
-        "CALL health_connection_upsert($1, $2, $3, $4, $5, $6)",
-        userID,
-        provider,
-        providerUserID,
-        accessToken,
-        refreshToken,
-        expiresAt,
-    )
+	_, err := r.DB.Exec(
+		ctx,
+		"CALL health_connection_upsert($1, $2, $3, $4, $5, $6)",
+		userID,
+		provider,
+		providerUserID,
+		accessToken,
+		refreshToken,
+		expiresAt,
+	)
 
-    return err
+	return err
 }
 
 func (r *Repository) GetHealthConnection(
@@ -116,4 +116,29 @@ func (r *Repository) GetHealthConnection(
 	}
 
 	return connection, nil
+}
+
+func (r *Repository) UpsertDailyActivity(
+	ctx context.Context,
+	userID int64,
+	activityDate time.Time,
+	steps *int64,
+	distanceMeters *float64,
+	activeEnergyKcal *float64,
+	totalCaloriesKcal *float64,
+	activeMinutes *float64,
+) error {
+	_, err := r.DB.Exec(
+		ctx,
+		`CALL health_daily_activity_upsert($1, $2, $3, $4, $5, $6, $7)`,
+		userID,
+		activityDate,
+		steps,
+		distanceMeters,
+		activeEnergyKcal,
+		totalCaloriesKcal,
+		activeMinutes,
+	)
+
+	return err
 }
