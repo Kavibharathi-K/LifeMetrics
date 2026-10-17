@@ -69,12 +69,12 @@ func (r *Repository) ListFoods(ctx context.Context) ([]Food, error) {
 	return foods, nil
 }
 
-func (r *Repository) GetFoodByID(ctx context.Context, foodID int,) (Food, error) {
+func (r *Repository) GetFoodByID(ctx context.Context, foodID int) (Food, error) {
 
 	query := `
 	SELECT * FROM get_food_by_id($1)
 	`
-	
+
 	var food Food
 
 	err := r.DB.QueryRow(
@@ -103,7 +103,7 @@ func (r *Repository) UpdateFood(ctx context.Context, foodID int, food *Food) err
 	`
 
 	_, err := r.DB.Exec(
-		ctx, 
+		ctx,
 		query,
 		foodID,
 		food.Name,

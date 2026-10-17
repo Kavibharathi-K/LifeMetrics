@@ -31,7 +31,7 @@ func (r *Repository) CreateUser(ctx context.Context, email string, passwordHash 
 	return id, err
 }
 
-func (r *Repository) GetUserByEmail(ctx context.Context,email string) (User, error) {
+func (r *Repository) GetUserByEmail(ctx context.Context, email string) (User, error) {
 	query := `
 		SELECT *
 		FROM user_get_by_email($1)

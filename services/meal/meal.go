@@ -60,7 +60,7 @@ type Meals struct {
 type MealsResponse struct {
 	Breakfast   Meals      `json:"breakfast"`
 	Lunch       Meals      `json:"lunch"`
-	Dinner      Meals       `json:"dinner"`
-	Snack       Meals       `json:"snack"`
+	Dinner      Meals      `json:"dinner"`
+	Snack       Meals      `json:"snack"`
 	DailyTotals MealTotals `json:"daily_totals"`
 }

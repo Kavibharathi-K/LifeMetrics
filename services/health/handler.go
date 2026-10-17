@@ -2,6 +2,7 @@ package health
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -257,4 +258,32 @@ func (h *Handler) SyncDailyVitalsHandler(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(`{"message":"Daily vitals response fetched successfully"}`))
+}
+
+func (h *Handler) SyncSleepHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	userID, err := auth.GetUserID(r.Context())
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if err := h.SyncSleepData(r.Context(), userID); err != nil {
+		log.Printf("Google Health sleep sync failed: %v", err)
+		http.Error(
+			w,
+			"Failed to fetch sleep data",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	_, _ = w.Write([]byte(
+		`{"message":"Sleep data fetched successfully"}`,
+	))
 }

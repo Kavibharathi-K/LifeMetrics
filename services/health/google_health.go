@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 )
@@ -89,6 +91,89 @@ type DailyHRVValue struct {
 	DeepSleepRMSSDMilliseconds *float64 `json:"deepSleepRootMeanSquareOfSuccessiveDifferencesMilliseconds"`
 }
 
+type SleepResponse struct {
+	DataPoints    []SleepDataPoint `json:"dataPoints"`
+	NextPageToken string           `json:"nextPageToken"`
+}
+
+type SleepDataPoint struct {
+	Name  string           `json:"name"`
+	Sleep SleepSessionData `json:"sleep"`
+}
+
+type SleepSessionData struct {
+	Interval SleepInterval `json:"interval"`
+	Type     string        `json:"type"`
+	Stages   []SleepStage  `json:"stages"`
+
+	Metadata SleepMetadata `json:"metadata"`
+	Summary  SleepSummary  `json:"summary"`
+
+	CreateTime string `json:"createTime"`
+	UpdateTime string `json:"updateTime"`
+}
+
+type SleepInterval struct {
+	StartTime      string         `json:"startTime"`
+	StartUTCOffset string         `json:"startUtcOffset"`
+	EndTime        string         `json:"endTime"`
+	EndUTCOffset   string         `json:"endUtcOffset"`
+	CivilStartTime *CivilDateTime `json:"civilStartTime"`
+	CivilEndTime   *CivilDateTime `json:"civilEndTime"`
+}
+
+type CivilDateTime struct {
+	Date CivilDate  `json:"date"`
+	Time *CivilTime `json:"time"`
+}
+
+type CivilDate struct {
+	Year  int `json:"year"`
+	Month int `json:"month"`
+	Day   int `json:"day"`
+}
+
+type CivilTime struct {
+	Hours   int `json:"hours"`
+	Minutes int `json:"minutes"`
+	Seconds int `json:"seconds"`
+	Nanos   int `json:"nanos"`
+}
+
+type SleepStage struct {
+	StartTime      string `json:"startTime"`
+	StartUTCOffset string `json:"startUtcOffset"`
+	EndTime        string `json:"endTime"`
+	EndUTCOffset   string `json:"endUtcOffset"`
+	Type           string `json:"type"`
+	CreateTime     string `json:"createTime"`
+	UpdateTime     string `json:"updateTime"`
+}
+
+type SleepMetadata struct {
+	Processed      bool   `json:"processed"`
+	Nap            bool   `json:"nap"`
+	MainSleep      bool   `json:"mainSleep"`
+	StagesStatus   string `json:"stagesStatus"`
+	ManuallyEdited bool   `json:"manuallyEdited"`
+	ExternalID     string `json:"externalId"`
+}
+
+type SleepSummary struct {
+	MinutesInSleepPeriod string              `json:"minutesInSleepPeriod"`
+	MinutesAfterWakeUp   string              `json:"minutesAfterWakeUp"`
+	MinutesToFallAsleep  string              `json:"minutesToFallAsleep"`
+	MinutesAsleep        string              `json:"minutesAsleep"`
+	MinutesAwake         string              `json:"minutesAwake"`
+	StagesSummary        []SleepStageSummary `json:"stagesSummary"`
+}
+
+type SleepStageSummary struct {
+	Type    string `json:"type"`
+	Minutes string `json:"minutes"`
+	Count   string `json:"count"`
+}
+
 // FetchDailyRollup retrieves a daily rollup for one Google Health data type.
 func (h *Handler) FetchHealthData(ctx context.Context, accessToken string, dataType string, action string, today time.Time) ([]byte, error) {
 	var (
@@ -163,6 +248,35 @@ func (h *Handler) FetchHealthData(ctx context.Context, accessToken string, dataT
 			"%s/users/me/dataTypes/%s/dataPoints:reconcile",
 			googleHealthAPIBaseURL,
 			dataType,
+		)
+	case "sleepYesterday":
+		yesterday := today.AddDate(0, 0, -1)
+
+		startOfYesterday := time.Date(
+			yesterday.Year(),
+			yesterday.Month(),
+			yesterday.Day(),
+			0, 0, 0, 0,
+			yesterday.Location(),
+		)
+
+		startUTC := startOfYesterday.UTC()
+		endUTC := startOfYesterday.AddDate(0, 0, 1).UTC()
+
+		filter := fmt.Sprintf(
+			`sleep.interval.end_time >= "%s" AND sleep.interval.end_time < "%s"`,
+			startUTC.Format(time.RFC3339),
+			endUTC.Format(time.RFC3339),
+		)
+
+		log.Printf("Google Health sleep filter: %s", filter)
+
+		method = http.MethodGet
+		apiURL = fmt.Sprintf(
+			"%s/users/me/dataTypes/%s/dataPoints?filter=%s",
+			googleHealthAPIBaseURL,
+			dataType,
+			url.QueryEscape(filter),
 		)
 
 	default:
@@ -558,6 +672,165 @@ func (h *Handler) SyncDailyVitalsData(ctx context.Context, userID int64) error {
 	} else {
 		fmt.Println("No daily vitals data available to save")
 	}
+
+	return nil
+}
+
+func (h *Handler) SyncSleepData(ctx context.Context, userID int64) error {
+	accessToken, err := h.GetValidAccessToken(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("get Google Health access token: %w", err)
+	}
+
+	loc, err := time.LoadLocation("Asia/Kolkata")
+	if err != nil {
+		return fmt.Errorf("load timezone: %w", err)
+	}
+
+	today := time.Now().In(loc)
+
+	response, err := h.FetchHealthData(
+		ctx,
+		accessToken,
+		"sleep",
+		"sleepYesterday",
+		today,
+	)
+	if err != nil {
+		log.Printf("Failed to fetch Google Health sleep data: %v", err)
+		return fmt.Errorf("fetch Google Health sleep data: %w", err)
+	}
+
+	log.Printf("Raw Google Health sleep response: %s", string(response))
+
+	var sleepResponse SleepResponse
+	if err := json.Unmarshal(response, &sleepResponse); err != nil {
+		return fmt.Errorf("parse Google Health sleep response: %w", err)
+	}
+
+	savedCount := 0
+
+	for _, point := range sleepResponse.DataPoints {
+		sleep := point.Sleep
+
+		startTime, err := time.Parse(time.RFC3339, sleep.Interval.StartTime)
+		if err != nil {
+			return fmt.Errorf("parse sleep start time for %s: %w", point.Name, err)
+		}
+
+		endTime, err := time.Parse(time.RFC3339, sleep.Interval.EndTime)
+		if err != nil {
+			return fmt.Errorf("parse sleep end time for %s: %w", point.Name, err)
+		}
+
+		durationMinutes := endTime.Sub(startTime).Minutes()
+
+		minutesInSleepPeriod, err := strconv.ParseFloat(
+			sleep.Summary.MinutesInSleepPeriod, 64,
+		)
+		if err != nil {
+			return fmt.Errorf("parse minutes in sleep period for %s: %w", point.Name, err)
+		}
+
+		minutesAfterWakeUp, err := strconv.ParseFloat(
+			sleep.Summary.MinutesAfterWakeUp, 64,
+		)
+		if err != nil {
+			return fmt.Errorf("parse minutes after wake up for %s: %w", point.Name, err)
+		}
+
+		minutesToFallAsleep, err := strconv.ParseFloat(
+			sleep.Summary.MinutesToFallAsleep, 64,
+		)
+		if err != nil {
+			return fmt.Errorf("parse minutes to fall asleep for %s: %w", point.Name, err)
+		}
+
+		minutesAsleep, err := strconv.ParseFloat(
+			sleep.Summary.MinutesAsleep, 64,
+		)
+		if err != nil {
+			return fmt.Errorf("parse minutes asleep for %s: %w", point.Name, err)
+		}
+
+		minutesAwake, err := strconv.ParseFloat(
+			sleep.Summary.MinutesAwake, 64,
+		)
+		if err != nil {
+			return fmt.Errorf("parse minutes awake for %s: %w", point.Name, err)
+		}
+
+		var stagesStatus string
+		if sleep.Metadata.StagesStatus != "" {
+			stagesStatus = sleep.Metadata.StagesStatus
+		}
+
+		sleepSessionID, err := h.Repo.UpsertSleepSession(
+			ctx,
+			userID,
+			point.Name,
+			startTime,
+			endTime,
+			durationMinutes,
+			sleep.Type,
+			sleep.Metadata.Nap,
+			sleep.Metadata.MainSleep,
+			sleep.Metadata.Processed,
+			sleep.Metadata.ManuallyEdited,
+			stagesStatus,
+			sleep.Metadata.ExternalID,
+			minutesInSleepPeriod,
+			minutesAfterWakeUp,
+			minutesToFallAsleep,
+			minutesAsleep,
+			minutesAwake,
+		)
+		if err != nil {
+			return fmt.Errorf("save sleep session %s: %w", point.Name, err)
+		}
+
+		// Save each individual sleep stage.
+		for _, stage := range sleep.Stages {
+			stageStartTime, err := time.Parse(time.RFC3339, stage.StartTime)
+			if err != nil {
+				return fmt.Errorf(
+					"parse sleep stage start time for session %s: %w",
+					point.Name,
+					err,
+				)
+			}
+
+			stageEndTime, err := time.Parse(time.RFC3339, stage.EndTime)
+			if err != nil {
+				return fmt.Errorf(
+					"parse sleep stage end time for session %s: %w",
+					point.Name,
+					err,
+				)
+			}
+
+			stageDurationMinutes := stageEndTime.Sub(stageStartTime).Minutes()
+			_, err = h.Repo.UpsertSleepStage(
+				ctx,
+				sleepSessionID,
+				stage.Type,
+				stageStartTime,
+				stageEndTime,
+				stageDurationMinutes,
+			)
+			if err != nil {
+				return fmt.Errorf(
+					"save sleep stage for session %s: %w",
+					point.Name,
+					err,
+				)
+			}
+		}
+		savedCount++
+	}
+	fmt.Printf("Total sessions returned by API: %d\n", len(sleepResponse.DataPoints))
+	fmt.Printf("Sleep sessions saved: %d\n", savedCount)
+	fmt.Printf("Next page token present: %t\n", sleepResponse.NextPageToken != "")
 
 	return nil
 }

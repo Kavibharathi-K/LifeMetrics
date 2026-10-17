@@ -60,7 +60,6 @@ func (r *Repository) CreateUserMetrics(
 	return id, err
 }
 
-
 func (r *Repository) GetLatestUserMetrics(
 	ctx context.Context,
 	userID int64,

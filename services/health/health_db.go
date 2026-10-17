@@ -2,6 +2,7 @@ package health
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -173,4 +174,85 @@ func (r *Repository) UpsertDailyVitals(
 	)
 	return err
 
+}
+
+func (r *Repository) UpsertSleepSession(
+	ctx context.Context,
+	userID int64,
+	googleDataPointID string,
+	startTime time.Time,
+	endTime time.Time,
+	durationMinutes float64,
+	sleepType string,
+	isNap bool,
+	isMainSleep bool,
+	processed bool,
+	manuallyEdited bool,
+	stagesStatus string,
+	externalID string,
+	minutesInSleepPeriod float64,
+	minutesAfterWakeUp float64,
+	minutesToFallAsleep float64,
+	minutesAsleep float64,
+	minutesAwake float64,
+) (int64, error) {
+	var sleepSessionID int64
+
+	err := r.DB.QueryRow(
+		ctx,
+		`SELECT health_sleep_session_upsert(
+            $1, $2, $3, $4, $5, $6, $7, $8, $9,
+            $10, $11, $12, $13, $14, $15, $16, $17
+        )`,
+		userID,
+		googleDataPointID,
+		startTime,
+		endTime,
+		durationMinutes,
+		sleepType,
+		isNap,
+		isMainSleep,
+		processed,
+		manuallyEdited,
+		stagesStatus,
+		externalID,
+		minutesInSleepPeriod,
+		minutesAfterWakeUp,
+		minutesToFallAsleep,
+		minutesAsleep,
+		minutesAwake,
+	).Scan(&sleepSessionID)
+
+	if err != nil {
+		return 0, fmt.Errorf("upsert sleep session: %w", err)
+	}
+
+	return sleepSessionID, nil
+}
+
+func (r *Repository) UpsertSleepStage(
+	ctx context.Context,
+	sleepSessionID int64,
+	stage string,
+	startTime time.Time,
+	endTime time.Time,
+	durationMinutes float64,
+) (int64, error) {
+	var sleepStageID int64
+
+	err := r.DB.QueryRow(
+		ctx,
+		`SELECT health_sleep_stage_upsert($1, $2, $3, $4, $5)`,
+		sleepSessionID,
+		stage,
+		startTime,
+		endTime,
+		durationMinutes,
+	).Scan(&sleepStageID)
+
+	if err != nil {
+		return 0, fmt.Errorf("upsert sleep stage: %w", err)
+	}
+
+	return sleepStageID, nil
 }
