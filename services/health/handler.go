@@ -240,3 +240,21 @@ func (h *Handler) SyncDailyActivity(w http.ResponseWriter, r *http.Request) {
 
 	_, _ = w.Write([]byte(`{"message":"Daily activity synchronized successfully"}`))
 }
+
+func (h *Handler) SyncDailyVitalsHandler(w http.ResponseWriter, r *http.Request) {
+	userID, err := auth.GetUserID(r.Context())
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	err = h.SyncDailyVitalsData(r.Context(), userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(`{"message":"Daily vitals response fetched successfully"}`))
+}

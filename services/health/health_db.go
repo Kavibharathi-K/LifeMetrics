@@ -142,3 +142,35 @@ func (r *Repository) UpsertDailyActivity(
 
 	return err
 }
+
+func (r *Repository) UpsertDailyVitals(
+
+	ctx context.Context,
+	userID int64,
+	vitalDate time.Time,
+	restingHeartRateBPM *float64,
+	hrvMS *float64,
+	zone1Minutes *float64,
+	zone2Minutes *float64,
+	zone3Minutes *float64,
+	zone4Minutes *float64,
+	zone5Minutes *float64,
+
+) error {
+
+	_, err := r.DB.Exec(
+		ctx,
+		`CALL health_daily_vitals_upsert($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+		userID,
+		vitalDate,
+		restingHeartRateBPM,
+		hrvMS,
+		zone1Minutes,
+		zone2Minutes,
+		zone3Minutes,
+		zone4Minutes,
+		zone5Minutes,
+	)
+	return err
+
+}

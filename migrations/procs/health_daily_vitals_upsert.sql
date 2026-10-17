@@ -38,13 +38,34 @@ BEGIN
 
     ON CONFLICT (user_id, vital_date)
     DO UPDATE SET
-        resting_heart_rate_bpm = EXCLUDED.resting_heart_rate_bpm,
-        hrv_ms = EXCLUDED.hrv_ms,
-        heart_rate_zone_1_minutes = EXCLUDED.heart_rate_zone_1_minutes,
-        heart_rate_zone_2_minutes = EXCLUDED.heart_rate_zone_2_minutes,
-        heart_rate_zone_3_minutes = EXCLUDED.heart_rate_zone_3_minutes,
-        heart_rate_zone_4_minutes = EXCLUDED.heart_rate_zone_4_minutes,
-        heart_rate_zone_5_minutes = EXCLUDED.heart_rate_zone_5_minutes,
+        resting_heart_rate_bpm = COALESCE(
+            EXCLUDED.resting_heart_rate_bpm,
+            health_daily_vitals.resting_heart_rate_bpm
+        ),
+        hrv_ms = COALESCE(
+            EXCLUDED.hrv_ms,
+            health_daily_vitals.hrv_ms
+        ),
+        heart_rate_zone_1_minutes = COALESCE(
+            EXCLUDED.heart_rate_zone_1_minutes,
+            health_daily_vitals.heart_rate_zone_1_minutes
+        ),
+        heart_rate_zone_2_minutes = COALESCE(
+            EXCLUDED.heart_rate_zone_2_minutes,
+            health_daily_vitals.heart_rate_zone_2_minutes
+        ),
+        heart_rate_zone_3_minutes = COALESCE(
+            EXCLUDED.heart_rate_zone_3_minutes,
+            health_daily_vitals.heart_rate_zone_3_minutes
+        ),
+        heart_rate_zone_4_minutes = COALESCE(
+            EXCLUDED.heart_rate_zone_4_minutes,
+            health_daily_vitals.heart_rate_zone_4_minutes
+        ),
+        heart_rate_zone_5_minutes = COALESCE(
+            EXCLUDED.heart_rate_zone_5_minutes,
+            health_daily_vitals.heart_rate_zone_5_minutes
+        ),
         updated_at = CURRENT_TIMESTAMP;
 
 END;

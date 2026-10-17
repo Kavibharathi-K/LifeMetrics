@@ -37,5 +37,7 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 		)
 
 		r.With(auth.AuthMiddleware).Post("/sync-daily-activity", handler.SyncDailyActivity)
+
+		r.With(auth.AuthMiddleware).Post("/sync-daily-vitals", handler.SyncDailyVitalsHandler)
 	})
 }
