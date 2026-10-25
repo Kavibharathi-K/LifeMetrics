@@ -77,10 +77,7 @@ func CalculateMacros(calories int, proteinRatio float64, carbRatio float64, fatR
 	return proteinGrams, carbGrams, fatGrams
 }
 
-func CalculateMacroGoals(
-	calories int,
-	weightKg int,
-) (int, int, int) {
+func CalculateMacroGoals(calories int, weightKg int) (int, int, int) {
 
 	proteinGrams :=
 		int(float64(weightKg) * 2.0)

@@ -33,15 +33,7 @@ func (r *Repository) AddMealItem(
 		)
 	`
 
-	_, err := r.DB.Exec(
-		ctx,
-		query,
-		userID,
-		mealType,
-		mealDate,
-		foodName,
-		quantity,
-	)
+	_, err := r.DB.Exec(ctx, query, userID, mealType, mealDate, foodName, quantity)
 
 	return err
 }
@@ -86,20 +78,7 @@ func (r *Repository) GetMealItems(
 
 		var item MealItem
 
-		err := rows.Scan(
-			&item.MealItemID,
-			&item.MealID,
-			&item.MealType,
-			&item.FoodID,
-			&item.FoodName,
-			&item.Quantity,
-			&item.Calories,
-			&item.Protein,
-			&item.Carbs,
-			&item.Fat,
-			&item.Fiber,
-			&item.CreatedAt,
-		)
+		err := rows.Scan(&item.MealItemID, &item.MealID, &item.MealType, &item.FoodID, &item.FoodName, &item.Quantity, &item.Calories, &item.Protein, &item.Carbs, &item.Fat, &item.Fiber, &item.CreatedAt)
 
 		if err != nil {
 			return nil, err

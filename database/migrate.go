@@ -49,15 +49,11 @@ func runFolderMigrations(ctx context.Context, pool *pgxpool.Pool, folder string)
 
 		var exists bool
 
-		err := pool.QueryRow(
-			ctx,
-			`SELECT EXISTS (
+		err := pool.QueryRow(ctx, `SELECT EXISTS (
 				SELECT 1
 				FROM schema_migrations
 				WHERE version=$1
-			)`,
-			version,
-		).Scan(&exists)
+			)`, version).Scan(&exists)
 
 		if err != nil {
 			return err
@@ -79,12 +75,8 @@ func runFolderMigrations(ctx context.Context, pool *pgxpool.Pool, folder string)
 			return err
 		}
 
-		_, err = pool.Exec(
-			ctx,
-			`INSERT INTO schema_migrations (version)
-			 VALUES ($1)`,
-			version,
-		)
+		_, err = pool.Exec(ctx, `INSERT INTO schema_migrations (version)
+			 VALUES ($1)`, version)
 		if err != nil {
 			return err
 		}

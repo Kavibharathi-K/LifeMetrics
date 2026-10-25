@@ -26,14 +26,7 @@ func (r *Repository) CreateWorkoutSchedule(
 		SELECT create_workout_schedule($1, $2, $3, $4)
 	`
 
-	return r.DB.QueryRow(
-		ctx,
-		query,
-		userID,
-		schedule.DayOfWeek,
-		schedule.WorkoutName,
-		exercises,
-	).Scan(&schedule.WorkoutScheduleId)
+	return r.DB.QueryRow(ctx, query, userID, schedule.DayOfWeek, schedule.WorkoutName, exercises).Scan(&schedule.WorkoutScheduleId)
 }
 
 func (r *Repository) CreateWorkoutScheduleExercise(
@@ -47,17 +40,7 @@ func (r *Repository) CreateWorkoutScheduleExercise(
 		FROM create_workout_schedule_exercise($1, $2, $3, $4)
 	`
 
-	return r.DB.QueryRow(
-		ctx,
-		query,
-		userID,
-		exercise.WorkoutScheduleId,
-		exercise.ExerciseName,
-		exercise.ExerciseOrder,
-	).Scan(
-		&exercise.WorkoutScheduleExerciseId,
-		&exercise.ExerciseOrder,
-	)
+	return r.DB.QueryRow(ctx, query, userID, exercise.WorkoutScheduleId, exercise.ExerciseName, exercise.ExerciseOrder).Scan(&exercise.WorkoutScheduleExerciseId, &exercise.ExerciseOrder)
 }
 
 func (r *Repository) ListWorkoutSchedules(
@@ -65,11 +48,7 @@ func (r *Repository) ListWorkoutSchedules(
 	userID int,
 ) ([]WorkoutScheduleResponse, error) {
 
-	rows, err := r.DB.Query(
-		ctx,
-		`SELECT * FROM list_workout_schedules($1)`,
-		userID,
-	)
+	rows, err := r.DB.Query(ctx, `SELECT * FROM list_workout_schedules($1)`, userID)
 
 	if err != nil {
 		return nil, err
@@ -84,28 +63,15 @@ func (r *Repository) ListWorkoutSchedules(
 		var schedule WorkoutScheduleResponse
 		var exercisesJSON []byte
 
-		if err := rows.Scan(
-			&schedule.WorkoutScheduleId,
-			&schedule.DayOfWeek,
-			&schedule.WorkoutName,
-			&exercisesJSON,
-			&schedule.CreatedAt,
-			&schedule.UpdatedAt,
-		); err != nil {
+		if err := rows.Scan(&schedule.WorkoutScheduleId, &schedule.DayOfWeek, &schedule.WorkoutName, &exercisesJSON, &schedule.CreatedAt, &schedule.UpdatedAt); err != nil {
 			return nil, err
 		}
 
-		if err := json.Unmarshal(
-			exercisesJSON,
-			&schedule.Exercises,
-		); err != nil {
+		if err := json.Unmarshal(exercisesJSON, &schedule.Exercises); err != nil {
 			return nil, err
 		}
 
-		schedules = append(
-			schedules,
-			schedule,
-		)
+		schedules = append(schedules, schedule)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -124,28 +90,13 @@ func (r *Repository) GetWorkoutScheduleByDay(
 	var schedule WorkoutScheduleResponse
 	var exercisesJSON []byte
 
-	err := r.DB.QueryRow(
-		ctx,
-		`SELECT * FROM get_workout_schedule_by_day($1, $2)`,
-		userID,
-		dayOfWeek,
-	).Scan(
-		&schedule.WorkoutScheduleId,
-		&schedule.DayOfWeek,
-		&schedule.WorkoutName,
-		&exercisesJSON,
-		&schedule.CreatedAt,
-		&schedule.UpdatedAt,
-	)
+	err := r.DB.QueryRow(ctx, `SELECT * FROM get_workout_schedule_by_day($1, $2)`, userID, dayOfWeek).Scan(&schedule.WorkoutScheduleId, &schedule.DayOfWeek, &schedule.WorkoutName, &exercisesJSON, &schedule.CreatedAt, &schedule.UpdatedAt)
 
 	if err != nil {
 		return WorkoutScheduleResponse{}, err
 	}
 
-	if err := json.Unmarshal(
-		exercisesJSON,
-		&schedule.Exercises,
-	); err != nil {
+	if err := json.Unmarshal(exercisesJSON, &schedule.Exercises); err != nil {
 		return WorkoutScheduleResponse{}, err
 	}
 
@@ -159,15 +110,7 @@ func (r *Repository) UpdateWorkoutSchedule(
 	exercises []string,
 ) error {
 
-	_, err := r.DB.Exec(
-		ctx,
-		`CALL update_workout_schedule($1, $2, $3, $4, $5)`,
-		schedule.WorkoutScheduleId,
-		userID,
-		schedule.DayOfWeek,
-		schedule.WorkoutName,
-		exercises,
-	)
+	_, err := r.DB.Exec(ctx, `CALL update_workout_schedule($1, $2, $3, $4, $5)`, schedule.WorkoutScheduleId, userID, schedule.DayOfWeek, schedule.WorkoutName, exercises)
 
 	return err
 }
@@ -180,12 +123,7 @@ func (r *Repository) DeleteWorkoutSchedule(
 
 	var deleted bool
 
-	err := r.DB.QueryRow(
-		ctx,
-		`SELECT delete_workout_schedule($1, $2)`,
-		workoutScheduleID,
-		userID,
-	).Scan(&deleted)
+	err := r.DB.QueryRow(ctx, `SELECT delete_workout_schedule($1, $2)`, workoutScheduleID, userID).Scan(&deleted)
 
 	return deleted, err
 }
@@ -194,10 +132,7 @@ func (r *Repository) GetWorkoutEmailUsers(
 	ctx context.Context,
 ) ([]int, error) {
 
-	rows, err := r.DB.Query(
-		ctx,
-		`SELECT * FROM get_workout_email_users()`,
-	)
+	rows, err := r.DB.Query(ctx, `SELECT * FROM get_workout_email_users()`)
 
 	if err != nil {
 		return nil, err
@@ -215,10 +150,7 @@ func (r *Repository) GetWorkoutEmailUsers(
 			return nil, err
 		}
 
-		userIDs = append(
-			userIDs,
-			userID,
-		)
+		userIDs = append(userIDs, userID)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -235,15 +167,7 @@ func (r *Repository) GetWorkoutEmailSettings(
 
 	var settings WorkoutEmailSettings
 
-	err := r.DB.QueryRow(
-		ctx,
-		`SELECT * FROM get_workout_email_settings($1)`,
-		userID,
-	).Scan(
-		&settings.Email,
-		&settings.EmailTime,
-		&settings.UpdatedAt,
-	)
+	err := r.DB.QueryRow(ctx, `SELECT * FROM get_workout_email_settings($1)`, userID).Scan(&settings.Email, &settings.EmailTime, &settings.UpdatedAt)
 
 	return settings, err
 }
@@ -254,11 +178,5 @@ func (r *Repository) UpdateWorkoutEmailSettings(
 	settings *WorkoutEmailSettings,
 ) error {
 
-	return r.DB.QueryRow(
-		ctx,
-		`SELECT update_workout_email_settings($1, $2, $3)`,
-		userID,
-		settings.Email,
-		settings.EmailTime,
-	).Scan(&settings.UpdatedAt)
+	return r.DB.QueryRow(ctx, `SELECT update_workout_email_settings($1, $2, $3)`, userID, settings.Email, settings.EmailTime).Scan(&settings.UpdatedAt)
 }

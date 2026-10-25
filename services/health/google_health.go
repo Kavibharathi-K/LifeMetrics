@@ -217,73 +217,36 @@ func (h *Handler) FetchHealthData(ctx context.Context, accessToken string, dataT
 				}
 			},
 			"windowSizeDays": 1
-		}`,
-			today.Year(),
-			int(today.Month()),
-			today.Day(),
-			tomorrow.Year(),
-			int(tomorrow.Month()),
-			tomorrow.Day(),
-		)
+		}`, today.Year(), int(today.Month()), today.Day(), tomorrow.Year(), int(tomorrow.Month()), tomorrow.Day())
 
 		requestBody = []byte(body)
 		method = http.MethodPost
-		apiURL = fmt.Sprintf(
-			"%s/users/me/dataTypes/%s/dataPoints:dailyRollUp",
-			googleHealthAPIBaseURL,
-			dataType,
-		)
+		apiURL = fmt.Sprintf("%s/users/me/dataTypes/%s/dataPoints:dailyRollUp", googleHealthAPIBaseURL, dataType)
 
 	case "list":
 		method = http.MethodGet
-		apiURL = fmt.Sprintf(
-			"%s/users/me/dataTypes/%s/dataPoints",
-			googleHealthAPIBaseURL,
-			dataType,
-		)
+		apiURL = fmt.Sprintf("%s/users/me/dataTypes/%s/dataPoints", googleHealthAPIBaseURL, dataType)
 
 	case "reconcile":
 		method = http.MethodGet
-		apiURL = fmt.Sprintf(
-			"%s/users/me/dataTypes/%s/dataPoints:reconcile",
-			googleHealthAPIBaseURL,
-			dataType,
-		)
+		apiURL = fmt.Sprintf("%s/users/me/dataTypes/%s/dataPoints:reconcile", googleHealthAPIBaseURL, dataType)
 	case "sleepYesterday":
 		yesterday := today.AddDate(0, 0, -1)
 
-		startOfYesterday := time.Date(
-			yesterday.Year(),
-			yesterday.Month(),
-			yesterday.Day(),
-			0, 0, 0, 0,
-			yesterday.Location(),
-		)
+		startOfYesterday := time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), 0, 0, 0, 0, yesterday.Location())
 
 		startUTC := startOfYesterday.UTC()
 		endUTC := startOfYesterday.AddDate(0, 0, 1).UTC()
 
-		filter := fmt.Sprintf(
-			`sleep.interval.end_time >= "%s" AND sleep.interval.end_time < "%s"`,
-			startUTC.Format(time.RFC3339),
-			endUTC.Format(time.RFC3339),
-		)
+		filter := fmt.Sprintf(`sleep.interval.end_time >= "%s" AND sleep.interval.end_time < "%s"`, startUTC.Format(time.RFC3339), endUTC.Format(time.RFC3339))
 
 		log.Printf("Google Health sleep filter: %s", filter)
 
 		method = http.MethodGet
-		apiURL = fmt.Sprintf(
-			"%s/users/me/dataTypes/%s/dataPoints?filter=%s",
-			googleHealthAPIBaseURL,
-			dataType,
-			url.QueryEscape(filter),
-		)
+		apiURL = fmt.Sprintf("%s/users/me/dataTypes/%s/dataPoints?filter=%s", googleHealthAPIBaseURL, dataType, url.QueryEscape(filter))
 
 	default:
-		return nil, fmt.Errorf(
-			"unsupported Google Health API action: %s",
-			action,
-		)
+		return nil, fmt.Errorf("unsupported Google Health API action: %s", action)
 	}
 
 	var requestReader io.Reader
@@ -293,11 +256,7 @@ func (h *Handler) FetchHealthData(ctx context.Context, accessToken string, dataT
 
 	req, err := http.NewRequestWithContext(ctx, method, apiURL, requestReader)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"failed to create Google Health request for %s: %w",
-			dataType,
-			err,
-		)
+		return nil, fmt.Errorf("failed to create Google Health request for %s: %w", dataType, err)
 	}
 
 	req.Header.Set("Authorization", "Bearer "+accessToken)
@@ -313,32 +272,17 @@ func (h *Handler) FetchHealthData(ctx context.Context, accessToken string, dataT
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"failed to call Google Health API for %s using %s: %w",
-			dataType,
-			action,
-			err,
-		)
+		return nil, fmt.Errorf("failed to call Google Health API for %s using %s: %w", dataType, action, err)
 	}
 	defer resp.Body.Close()
 
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"failed to read Google Health response for %s: %w",
-			dataType,
-			err,
-		)
+		return nil, fmt.Errorf("failed to read Google Health response for %s: %w", dataType, err)
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf(
-			"Google Health API for %s using %s returned status %d: %s",
-			dataType,
-			action,
-			resp.StatusCode,
-			string(responseBody),
-		)
+		return nil, fmt.Errorf("Google Health API for %s using %s returned status %d: %s", dataType, action, resp.StatusCode, string(responseBody))
 	}
 
 	return responseBody, nil
@@ -349,10 +293,7 @@ func (h *Handler) SyncDailyActivityData(ctx context.Context, userID int64) error
 	// 1. Obtain a valid Google Health access token.
 	accessToken, err := h.GetValidAccessToken(ctx, userID)
 	if err != nil {
-		return fmt.Errorf(
-			"failed to get Google Health access token: %w",
-			err,
-		)
+		return fmt.Errorf("failed to get Google Health access token: %w", err)
 	}
 
 	// 2. Calculate today's date in the Asia/Kolkata timezone.
@@ -384,29 +325,15 @@ func (h *Handler) SyncDailyActivityData(ctx context.Context, userID int64) error
 	}
 
 	for _, dataType := range dataTypes {
-		body, err := h.FetchHealthData(
-			ctx,
-			accessToken,
-			dataType,
-			"dailyRollUp",
-			today,
-		)
+		body, err := h.FetchHealthData(ctx, accessToken, dataType, "dailyRollUp", today)
 		if err != nil {
-			return fmt.Errorf(
-				"failed to fetch %s: %w",
-				dataType,
-				err,
-			)
+			return fmt.Errorf("failed to fetch %s: %w", dataType, err)
 		}
 
 		var result DailyActivityResponse
 
 		if err := json.Unmarshal(body, &result); err != nil {
-			return fmt.Errorf(
-				"failed to parse %s response: %w",
-				dataType,
-				err,
-			)
+			return fmt.Errorf("failed to parse %s response: %w", dataType, err)
 		}
 
 		// A missing rollup means no data was returned for this metric.
@@ -420,13 +347,7 @@ func (h *Handler) SyncDailyActivityData(ctx context.Context, userID int64) error
 		if activityDate.IsZero() {
 			date := point.CivilStartTime.Date
 
-			activityDate = time.Date(
-				date.Year,
-				time.Month(date.Month),
-				date.Day,
-				0, 0, 0, 0,
-				time.UTC,
-			)
+			activityDate = time.Date(date.Year, time.Month(date.Month), date.Day, 0, 0, 0, 0, time.UTC)
 		}
 
 		switch dataType {
@@ -435,16 +356,9 @@ func (h *Handler) SyncDailyActivityData(ctx context.Context, userID int64) error
 				continue
 			}
 
-			value, err := strconv.ParseInt(
-				point.Steps.CountSum,
-				10,
-				64,
-			)
+			value, err := strconv.ParseInt(point.Steps.CountSum, 10, 64)
 			if err != nil {
-				return fmt.Errorf(
-					"failed to parse steps count: %w",
-					err,
-				)
+				return fmt.Errorf("failed to parse steps count: %w", err)
 			}
 
 			steps = &value
@@ -454,15 +368,9 @@ func (h *Handler) SyncDailyActivityData(ctx context.Context, userID int64) error
 				continue
 			}
 
-			millimeters, err := strconv.ParseFloat(
-				point.Distance.MillimetersSum,
-				64,
-			)
+			millimeters, err := strconv.ParseFloat(point.Distance.MillimetersSum, 64)
 			if err != nil {
-				return fmt.Errorf(
-					"failed to parse distance: %w",
-					err,
-				)
+				return fmt.Errorf("failed to parse distance: %w", err)
 			}
 
 			// Convert millimeters to meters.
@@ -496,17 +404,9 @@ func (h *Handler) SyncDailyActivityData(ctx context.Context, userID int64) error
 					continue
 				}
 
-				minutes, err := strconv.ParseInt(
-					activityLevel.ActiveMinutesSum,
-					10,
-					64,
-				)
+				minutes, err := strconv.ParseInt(activityLevel.ActiveMinutesSum, 10, 64)
 				if err != nil {
-					return fmt.Errorf(
-						"failed to parse active minutes for %s: %w",
-						activityLevel.ActivityLevel,
-						err,
-					)
+					return fmt.Errorf("failed to parse active minutes for %s: %w", activityLevel.ActivityLevel, err)
 				}
 
 				totalMinutes += minutes
@@ -522,28 +422,13 @@ func (h *Handler) SyncDailyActivityData(ctx context.Context, userID int64) error
 
 	// 5. Ensure at least one metric was returned.
 	if activityDate.IsZero() {
-		return fmt.Errorf(
-			"Google Health returned no daily activity data for %s",
-			today.Format("2006-01-02"),
-		)
+		return fmt.Errorf("Google Health returned no daily activity data for %s", today.Format("2006-01-02"))
 	}
 
 	// 6. Save all collected metrics with one database call.
-	err = h.Repo.UpsertDailyActivity(
-		ctx,
-		userID,
-		activityDate,
-		steps,
-		distanceMeters,
-		activeEnergyKcal,
-		totalCaloriesKcal,
-		activeMinutes,
-	)
+	err = h.Repo.UpsertDailyActivity(ctx, userID, activityDate, steps, distanceMeters, activeEnergyKcal, totalCaloriesKcal, activeMinutes)
 	if err != nil {
-		return fmt.Errorf(
-			"failed to save daily activity to database: %w",
-			err,
-		)
+		return fmt.Errorf("failed to save daily activity to database: %w", err)
 	}
 
 	return nil
@@ -566,13 +451,7 @@ func (h *Handler) SyncDailyVitalsData(ctx context.Context, userID int64) error {
 	var hrvMS *float64
 
 	// 1. Fetch daily resting heart rate.
-	response, err := h.FetchHealthData(
-		ctx,
-		accessToken,
-		"daily-resting-heart-rate",
-		"list",
-		today,
-	)
+	response, err := h.FetchHealthData(ctx, accessToken, "daily-resting-heart-rate", "list", today)
 	if err != nil {
 		return fmt.Errorf("fetch daily resting heart rate: %w", err)
 	}
@@ -607,13 +486,7 @@ func (h *Handler) SyncDailyVitalsData(ctx context.Context, userID int64) error {
 	}
 
 	// 2. Fetch daily HRV.
-	hrvResponse, err := h.FetchHealthData(
-		ctx,
-		accessToken,
-		"daily-heart-rate-variability",
-		"list",
-		today,
-	)
+	hrvResponse, err := h.FetchHealthData(ctx, accessToken, "daily-heart-rate-variability", "list", today)
 	if err != nil {
 		return fmt.Errorf("fetch daily HRV: %w", err)
 	}
@@ -652,18 +525,7 @@ func (h *Handler) SyncDailyVitalsData(ctx context.Context, userID int64) error {
 	// Zones are not being fetched yet. Passing nil preserves their
 	// existing values through the procedure's COALESCE logic.
 	if restingHeartRate != nil || hrvMS != nil {
-		err = h.Repo.UpsertDailyVitals(
-			ctx,
-			userID,
-			today,
-			restingHeartRate,
-			hrvMS,
-			nil, // Zone 1
-			nil, // Zone 2
-			nil, // Zone 3
-			nil, // Zone 4
-			nil, // Zone 5
-		)
+		err = h.Repo.UpsertDailyVitals(ctx, userID, today, restingHeartRate, hrvMS, nil, nil, nil, nil, nil)
 		if err != nil {
 			return fmt.Errorf("save daily vitals: %w", err)
 		}
@@ -689,13 +551,7 @@ func (h *Handler) SyncSleepData(ctx context.Context, userID int64) error {
 
 	today := time.Now().In(loc)
 
-	response, err := h.FetchHealthData(
-		ctx,
-		accessToken,
-		"sleep",
-		"sleepYesterday",
-		today,
-	)
+	response, err := h.FetchHealthData(ctx, accessToken, "sleep", "sleepYesterday", today)
 	if err != nil {
 		log.Printf("Failed to fetch Google Health sleep data: %v", err)
 		return fmt.Errorf("fetch Google Health sleep data: %w", err)
@@ -725,37 +581,27 @@ func (h *Handler) SyncSleepData(ctx context.Context, userID int64) error {
 
 		durationMinutes := endTime.Sub(startTime).Minutes()
 
-		minutesInSleepPeriod, err := strconv.ParseFloat(
-			sleep.Summary.MinutesInSleepPeriod, 64,
-		)
+		minutesInSleepPeriod, err := strconv.ParseFloat(sleep.Summary.MinutesInSleepPeriod, 64)
 		if err != nil {
 			return fmt.Errorf("parse minutes in sleep period for %s: %w", point.Name, err)
 		}
 
-		minutesAfterWakeUp, err := strconv.ParseFloat(
-			sleep.Summary.MinutesAfterWakeUp, 64,
-		)
+		minutesAfterWakeUp, err := strconv.ParseFloat(sleep.Summary.MinutesAfterWakeUp, 64)
 		if err != nil {
 			return fmt.Errorf("parse minutes after wake up for %s: %w", point.Name, err)
 		}
 
-		minutesToFallAsleep, err := strconv.ParseFloat(
-			sleep.Summary.MinutesToFallAsleep, 64,
-		)
+		minutesToFallAsleep, err := strconv.ParseFloat(sleep.Summary.MinutesToFallAsleep, 64)
 		if err != nil {
 			return fmt.Errorf("parse minutes to fall asleep for %s: %w", point.Name, err)
 		}
 
-		minutesAsleep, err := strconv.ParseFloat(
-			sleep.Summary.MinutesAsleep, 64,
-		)
+		minutesAsleep, err := strconv.ParseFloat(sleep.Summary.MinutesAsleep, 64)
 		if err != nil {
 			return fmt.Errorf("parse minutes asleep for %s: %w", point.Name, err)
 		}
 
-		minutesAwake, err := strconv.ParseFloat(
-			sleep.Summary.MinutesAwake, 64,
-		)
+		minutesAwake, err := strconv.ParseFloat(sleep.Summary.MinutesAwake, 64)
 		if err != nil {
 			return fmt.Errorf("parse minutes awake for %s: %w", point.Name, err)
 		}
@@ -765,26 +611,7 @@ func (h *Handler) SyncSleepData(ctx context.Context, userID int64) error {
 			stagesStatus = sleep.Metadata.StagesStatus
 		}
 
-		sleepSessionID, err := h.Repo.UpsertSleepSession(
-			ctx,
-			userID,
-			point.Name,
-			startTime,
-			endTime,
-			durationMinutes,
-			sleep.Type,
-			sleep.Metadata.Nap,
-			sleep.Metadata.MainSleep,
-			sleep.Metadata.Processed,
-			sleep.Metadata.ManuallyEdited,
-			stagesStatus,
-			sleep.Metadata.ExternalID,
-			minutesInSleepPeriod,
-			minutesAfterWakeUp,
-			minutesToFallAsleep,
-			minutesAsleep,
-			minutesAwake,
-		)
+		sleepSessionID, err := h.Repo.UpsertSleepSession(ctx, userID, point.Name, startTime, endTime, durationMinutes, sleep.Type, sleep.Metadata.Nap, sleep.Metadata.MainSleep, sleep.Metadata.Processed, sleep.Metadata.ManuallyEdited, stagesStatus, sleep.Metadata.ExternalID, minutesInSleepPeriod, minutesAfterWakeUp, minutesToFallAsleep, minutesAsleep, minutesAwake)
 		if err != nil {
 			return fmt.Errorf("save sleep session %s: %w", point.Name, err)
 		}
@@ -793,37 +620,18 @@ func (h *Handler) SyncSleepData(ctx context.Context, userID int64) error {
 		for _, stage := range sleep.Stages {
 			stageStartTime, err := time.Parse(time.RFC3339, stage.StartTime)
 			if err != nil {
-				return fmt.Errorf(
-					"parse sleep stage start time for session %s: %w",
-					point.Name,
-					err,
-				)
+				return fmt.Errorf("parse sleep stage start time for session %s: %w", point.Name, err)
 			}
 
 			stageEndTime, err := time.Parse(time.RFC3339, stage.EndTime)
 			if err != nil {
-				return fmt.Errorf(
-					"parse sleep stage end time for session %s: %w",
-					point.Name,
-					err,
-				)
+				return fmt.Errorf("parse sleep stage end time for session %s: %w", point.Name, err)
 			}
 
 			stageDurationMinutes := stageEndTime.Sub(stageStartTime).Minutes()
-			_, err = h.Repo.UpsertSleepStage(
-				ctx,
-				sleepSessionID,
-				stage.Type,
-				stageStartTime,
-				stageEndTime,
-				stageDurationMinutes,
-			)
+			_, err = h.Repo.UpsertSleepStage(ctx, sleepSessionID, stage.Type, stageStartTime, stageEndTime, stageDurationMinutes)
 			if err != nil {
-				return fmt.Errorf(
-					"save sleep stage for session %s: %w",
-					point.Name,
-					err,
-				)
+				return fmt.Errorf("save sleep stage for session %s: %w", point.Name, err)
 			}
 		}
 		savedCount++

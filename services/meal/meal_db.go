@@ -29,13 +29,7 @@ func (r *Repository) GetTodayNutrition(ctx context.Context, userID int64) ([]Tod
 	var meals []TodayNutrition
 	for rows.Next() {
 		var m TodayNutrition
-		err := rows.Scan(
-			&m.TotalCalories,
-			&m.TotalProtein,
-			&m.TotalCarbs,
-			&m.TotalFat,
-			&m.TotalFiber,
-		)
+		err := rows.Scan(&m.TotalCalories, &m.TotalProtein, &m.TotalCarbs, &m.TotalFat, &m.TotalFiber)
 		if err != nil {
 			return nil, err
 		}
@@ -47,11 +41,7 @@ func (r *Repository) GetTodayNutrition(ctx context.Context, userID int64) ([]Tod
 
 func (r *Repository) GetMealsByDate(ctx context.Context, userID int64, date string) (MealsResponse, error) {
 
-	rows, err := r.DB.Query(ctx,
-		`SELECT * FROM get_meals_by_date($1, $2)`,
-		userID,
-		date,
-	)
+	rows, err := r.DB.Query(ctx, `SELECT * FROM get_meals_by_date($1, $2)`, userID, date)
 
 	if err != nil {
 		return MealsResponse{}, err
@@ -73,28 +63,7 @@ func (r *Repository) GetMealsByDate(ctx context.Context, userID int64, date stri
 		var totals MealTotals
 		var item FoodItem
 
-		err := rows.Scan(
-
-			&mealID,
-			&mealType,
-
-			&totals.Calories,
-			&totals.Protein,
-			&totals.Carbs,
-			&totals.Fat,
-			&totals.Fiber,
-
-			&item.FoodID,
-			&item.Name,
-			&item.Unit,
-
-			&item.Quantity,
-			&item.Calories,
-			&item.Protein,
-			&item.Carbs,
-			&item.Fat,
-			&item.Fiber,
-		)
+		err := rows.Scan(&mealID, &mealType, &totals.Calories, &totals.Protein, &totals.Carbs, &totals.Fat, &totals.Fiber, &item.FoodID, &item.Name, &item.Unit, &item.Quantity, &item.Calories, &item.Protein, &item.Carbs, &item.Fat, &item.Fiber)
 
 		if err != nil {
 			return MealsResponse{}, err
@@ -137,25 +106,13 @@ func (r *Repository) GetMealsByDate(ctx context.Context, userID int64, date stri
 		}
 	}
 
-	addTotals(
-		&response.DailyTotals,
-		response.Breakfast.Totals,
-	)
+	addTotals(&response.DailyTotals, response.Breakfast.Totals)
 
-	addTotals(
-		&response.DailyTotals,
-		response.Lunch.Totals,
-	)
+	addTotals(&response.DailyTotals, response.Lunch.Totals)
 
-	addTotals(
-		&response.DailyTotals,
-		response.Dinner.Totals,
-	)
+	addTotals(&response.DailyTotals, response.Dinner.Totals)
 
-	addTotals(
-		&response.DailyTotals,
-		response.Snack.Totals,
-	)
+	addTotals(&response.DailyTotals, response.Snack.Totals)
 
 	return response, nil
 }

@@ -34,71 +34,39 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
-		http.Error(
-			w,
-			"invalid request body",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	req.Email = strings.TrimSpace(strings.ToLower(req.Email))
 
 	if req.Email == "" || req.Password == "" {
-		http.Error(
-			w,
-			"email and password are required",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "email and password are required", http.StatusBadRequest)
 		return
 	}
 
 	if len(req.Password) < 8 {
-		http.Error(
-			w,
-			"password must be at least 8 characters",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "password must be at least 8 characters", http.StatusBadRequest)
 		return
 	}
 
-	passwordHash, err := bcrypt.GenerateFromPassword(
-		[]byte(req.Password),
-		bcrypt.DefaultCost,
-	)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		http.Error(
-			w,
-			"failed to process password",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "failed to process password", http.StatusInternalServerError)
 		return
 	}
 
-	userID, err := h.Repo.CreateUser(
-		r.Context(),
-		req.Email,
-		string(passwordHash),
-	)
+	userID, err := h.Repo.CreateUser(r.Context(), req.Email, string(passwordHash))
 
 	if err != nil {
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 
-	json.NewEncoder(w).Encode(
-		map[string]interface{}{
-			"user_id": userID,
-			"email":   req.Email,
-		},
-	)
+	json.NewEncoder(w).Encode(map[string]interface{}{"user_id": userID, "email": req.Email})
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
@@ -108,71 +76,39 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
-		http.Error(
-			w,
-			"invalid request body",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	req.Email = strings.TrimSpace(strings.ToLower(req.Email))
 
 	if req.Email == "" || req.Password == "" {
-		http.Error(
-			w,
-			"email and password are required",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "email and password are required", http.StatusBadRequest)
 		return
 	}
 
-	user, err := h.Repo.GetUserByEmail(
-		r.Context(),
-		req.Email,
-	)
+	user, err := h.Repo.GetUserByEmail(r.Context(), req.Email)
 
 	if err != nil {
-		http.Error(
-			w,
-			"invalid email or password",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword(
-		[]byte(user.PasswordHash),
-		[]byte(req.Password),
-	)
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
 
 	if err != nil {
-		http.Error(
-			w,
-			"invalid email or password",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
 	token, err := GenerateToken(user.ID)
 
 	if err != nil {
-		http.Error(
-			w,
-			"failed to generate authentication token",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "failed to generate authentication token", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 
-	json.NewEncoder(w).Encode(
-		map[string]interface{}{
-			"user_id": user.ID,
-			"email":   user.Email,
-			"token":   token,
-		},
-	)
+	json.NewEncoder(w).Encode(map[string]interface{}{"user_id": user.ID, "email": user.Email, "token": token})
 }

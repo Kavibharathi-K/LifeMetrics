@@ -18,16 +18,7 @@ func (r *Repository) CreateFood(ctx context.Context, food *Food) error {
 
 	query := `SELECT create_food($1,$2,$3,$4,$5,$6,$7,$8);`
 
-	return r.DB.QueryRow(ctx, query,
-		food.Name,
-		food.MeasurementType,
-		food.BaseQuantity,
-		food.Calories,
-		food.Protein,
-		food.Carbs,
-		food.Fat,
-		food.Fiber,
-	).Scan(&food.FoodID)
+	return r.DB.QueryRow(ctx, query, food.Name, food.MeasurementType, food.BaseQuantity, food.Calories, food.Protein, food.Carbs, food.Fat, food.Fiber).Scan(&food.FoodID)
 }
 
 func (r *Repository) ListFoods(ctx context.Context) ([]Food, error) {
@@ -46,18 +37,7 @@ func (r *Repository) ListFoods(ctx context.Context) ([]Food, error) {
 
 		var f Food
 
-		err := rows.Scan(
-			&f.FoodID,
-			&f.Name,
-			&f.MeasurementType,
-			&f.BaseQuantity,
-			&f.Calories,
-			&f.Protein,
-			&f.Carbs,
-			&f.Fat,
-			&f.Fiber,
-			&f.CreatedAt,
-		)
+		err := rows.Scan(&f.FoodID, &f.Name, &f.MeasurementType, &f.BaseQuantity, &f.Calories, &f.Protein, &f.Carbs, &f.Fat, &f.Fiber, &f.CreatedAt)
 
 		if err != nil {
 			return nil, err
@@ -77,22 +57,7 @@ func (r *Repository) GetFoodByID(ctx context.Context, foodID int) (Food, error) 
 
 	var food Food
 
-	err := r.DB.QueryRow(
-		ctx,
-		query,
-		foodID,
-	).Scan(
-		&food.FoodID,
-		&food.Name,
-		&food.MeasurementType,
-		&food.BaseQuantity,
-		&food.Calories,
-		&food.Protein,
-		&food.Carbs,
-		&food.Fat,
-		&food.Fiber,
-		&food.CreatedAt,
-	)
+	err := r.DB.QueryRow(ctx, query, foodID).Scan(&food.FoodID, &food.Name, &food.MeasurementType, &food.BaseQuantity, &food.Calories, &food.Protein, &food.Carbs, &food.Fat, &food.Fiber, &food.CreatedAt)
 
 	return food, err
 }
@@ -102,18 +67,6 @@ func (r *Repository) UpdateFood(ctx context.Context, foodID int, food *Food) err
 	call update_food($1,$2,$3,$4,$5,$6,$7,$8,$9);
 	`
 
-	_, err := r.DB.Exec(
-		ctx,
-		query,
-		foodID,
-		food.Name,
-		food.MeasurementType,
-		food.BaseQuantity,
-		food.Calories,
-		food.Protein,
-		food.Carbs,
-		food.Fat,
-		food.Fiber,
-	)
+	_, err := r.DB.Exec(ctx, query, foodID, food.Name, food.MeasurementType, food.BaseQuantity, food.Calories, food.Protein, food.Carbs, food.Fat, food.Fiber)
 	return err
 }

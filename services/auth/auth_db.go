@@ -22,12 +22,7 @@ func (r *Repository) CreateUser(ctx context.Context, email string, passwordHash 
 		)
 	`
 	var id int64
-	err := r.DB.QueryRow(
-		ctx,
-		query,
-		email,
-		passwordHash,
-	).Scan(&id)
+	err := r.DB.QueryRow(ctx, query, email, passwordHash).Scan(&id)
 	return id, err
 }
 
@@ -37,17 +32,7 @@ func (r *Repository) GetUserByEmail(ctx context.Context, email string) (User, er
 		FROM user_get_by_email($1)
 	`
 	var user User
-	err := r.DB.QueryRow(
-		ctx,
-		query,
-		email,
-	).Scan(
-		&user.ID,
-		&user.Email,
-		&user.PasswordHash,
-		&user.CreatedAt,
-		&user.UpdatedAt,
-	)
+	err := r.DB.QueryRow(ctx, query, email).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
 
 	return user, err
 }

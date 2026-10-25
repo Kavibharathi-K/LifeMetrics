@@ -41,10 +41,7 @@ func main() {
 	health.RegisterRoutes(r, db)
 	auth.RegisterRoutes(r, db)
 	workoutRepo := workout.NewRepository(db)
-	workoutService := workout.NewWorkoutService(
-		workoutRepo,
-		workout.NewEmailService(),
-	)
+	workoutService := workout.NewWorkoutService(workoutRepo, workout.NewEmailService())
 	workout.StartWorkoutScheduler(workoutService)
 
 	log.Println("=======================")

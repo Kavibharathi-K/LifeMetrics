@@ -40,10 +40,7 @@ func (s *workoutService) SendTodaysWorkoutEmail() error {
 
 	for _, userID := range userIDs {
 
-		settings, err := s.repo.GetWorkoutEmailSettings(
-			context.Background(),
-			userID,
-		)
+		settings, err := s.repo.GetWorkoutEmailSettings(context.Background(), userID)
 
 		if errors.Is(err, pgx.ErrNoRows) {
 			continue
@@ -61,11 +58,7 @@ func (s *workoutService) SendTodaysWorkoutEmail() error {
 			continue
 		}
 
-		schedule, err := s.repo.GetWorkoutScheduleByDay(
-			context.Background(),
-			userID,
-			dayOfWeek,
-		)
+		schedule, err := s.repo.GetWorkoutScheduleByDay(context.Background(), userID, dayOfWeek)
 
 		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 			return err
@@ -82,10 +75,7 @@ func (s *workoutService) SendTodaysWorkoutEmail() error {
 		if emailData.RestDay {
 			subject = "Today's workout: Rest day"
 		} else {
-			subject = fmt.Sprintf(
-				"Today's workout: %s",
-				schedule.WorkoutName,
-			)
+			subject = fmt.Sprintf("Today's workout: %s", schedule.WorkoutName)
 		}
 
 		htmlBody, err := renderWorkoutScheduleEmail(emailData)
@@ -93,11 +83,7 @@ func (s *workoutService) SendTodaysWorkoutEmail() error {
 			return err
 		}
 
-		err = s.emailService.SendWorkoutEmail(
-			settings.Email,
-			subject,
-			htmlBody,
-		)
+		err = s.emailService.SendWorkoutEmail(settings.Email, subject, htmlBody)
 
 		if err != nil {
 			return err
@@ -136,9 +122,7 @@ type WorkoutScheduleEmail struct {
 }
 
 func renderWorkoutScheduleEmail(data WorkoutScheduleEmail) (string, error) {
-	tmpl, err := template.ParseFiles(
-		"assets/templates/emails/workout_schedule.html",
-	)
+	tmpl, err := template.ParseFiles("assets/templates/emails/workout_schedule.html")
 	if err != nil {
 		return "", err
 	}

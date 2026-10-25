@@ -36,11 +36,7 @@ func (h *Handler) CreateUserMetrics(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		http.Error(
-			w,
-			"unauthorized",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 
 	}
@@ -48,11 +44,7 @@ func (h *Handler) CreateUserMetrics(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusBadRequest,
-		)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	req.UserId = userID
@@ -70,28 +62,12 @@ func (h *Handler) CreateUserMetrics(w http.ResponseWriter, r *http.Request) {
 	_, err = h.Repo.CreateUserMetrics(r.Context(), req)
 
 	if err != nil {
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set(
-
-		"Content-Type",
-		"application/json",
-	)
-	json.NewEncoder(w).Encode(
-
-		map[string]interface{}{
-			"maintenance_calories": calories,
-			"protein_goal":         proteinGoal,
-			"carb_goal":            carbGoal,
-			"fat_goal":             fatGoal,
-		},
-	)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{"maintenance_calories": calories, "protein_goal": proteinGoal, "carb_goal": carbGoal, "fat_goal": fatGoal})
 }
 
 func (h *Handler) GetLatestUserMetrics(
@@ -103,35 +79,19 @@ func (h *Handler) GetLatestUserMetrics(
 	userID, err := auth.GetUserID(r.Context())
 	if err != nil {
 
-		http.Error(
-			w,
-			"unauthorized",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 	data, err :=
-		h.Repo.GetLatestUserMetrics(
-			r.Context(),
-			userID,
-		)
+		h.Repo.GetLatestUserMetrics(r.Context(), userID)
 
 	if err != nil {
 
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		return
 	}
-	w.Header().Set(
-
-		"Content-Type",
-
-		"application/json",
-	)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).
 		Encode(data)
 }

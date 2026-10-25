@@ -15,11 +15,7 @@ func (h *Handler) GoogleConnectHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := auth.GetUserID(r.Context())
 	if err != nil {
 
-		http.Error(
-			w,
-			"authenticated user not found",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "authenticated user not found", http.StatusUnauthorized)
 		return
 	}
 	config := GoogleOAuthConfig()
@@ -31,33 +27,16 @@ func (h *Handler) GoogleConnectHandler(w http.ResponseWriter, r *http.Request) {
 
 	expiresAt := time.Now().Add(10 * time.Minute)
 
-	err = h.Repo.CreateOAuthState(
-		r.Context(),
-		state,
-		userID,
-		expiresAt,
-	)
+	err = h.Repo.CreateOAuthState(r.Context(), state, userID, expiresAt)
 
 	if err != nil {
-		http.Error(
-			w,
-			"failed to create OAuth state",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "failed to create OAuth state", http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Printf(
-		"Starting Google Health OAuth for user_id=%d, state=%s\n",
-		userID,
-		state,
-	)
+	fmt.Printf("Starting Google Health OAuth for user_id=%d, state=%s\n", userID, state)
 
-	authURL := config.AuthCodeURL(
-		state,
-		oauth2.AccessTypeOffline,
-		oauth2.SetAuthURLParam("prompt", "consent"),
-	)
+	authURL := config.AuthCodeURL(state, oauth2.AccessTypeOffline, oauth2.SetAuthURLParam("prompt", "consent"))
 	fmt.Println("Google OAuth URL:")
 	fmt.Println(authURL)
 
@@ -67,11 +46,7 @@ func (h *Handler) GoogleConnectHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	// Check whether Google returned an OAuth error.
 	if errParam := r.URL.Query().Get("error"); errParam != "" {
-		http.Error(
-			w,
-			"Google OAuth error: "+errParam,
-			http.StatusBadRequest,
-		)
+		http.Error(w, "Google OAuth error: "+errParam, http.StatusBadRequest)
 		return
 	}
 
@@ -79,42 +54,24 @@ func (h *Handler) GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) 
 	state := r.URL.Query().Get("state")
 
 	if state == "" {
-		http.Error(
-			w,
-			"Missing OAuth state",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "Missing OAuth state", http.StatusBadRequest)
 		return
 	}
 
 	// Look up the state and get the LifeMetrics user
 	// who started the OAuth flow.
-	userID, expiresAt, err := h.Repo.GetOAuthState(
-		r.Context(),
-		state,
-	)
+	userID, expiresAt, err := h.Repo.GetOAuthState(r.Context(), state)
 
 	if err != nil {
-		http.Error(
-			w,
-			"Invalid OAuth state",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "Invalid OAuth state", http.StatusBadRequest)
 		return
 	}
 
 	// Make sure the OAuth state has not expired.
 	if time.Now().After(expiresAt) {
-		_ = h.Repo.DeleteOAuthState(
-			r.Context(),
-			state,
-		)
+		_ = h.Repo.DeleteOAuthState(r.Context(), state)
 
-		http.Error(
-			w,
-			"OAuth state expired",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "OAuth state expired", http.StatusBadRequest)
 		return
 	}
 
@@ -122,11 +79,7 @@ func (h *Handler) GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) 
 	code := r.URL.Query().Get("code")
 
 	if code == "" {
-		http.Error(
-			w,
-			"Missing authorization code",
-			http.StatusBadRequest,
-		)
+		http.Error(w, "Missing authorization code", http.StatusBadRequest)
 		return
 	}
 
@@ -137,47 +90,24 @@ func (h *Handler) GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) 
 	token, err := config.Exchange(r.Context(), code)
 
 	if err != nil {
-		http.Error(
-			w,
-			"Failed to exchange authorization code: "+err.Error(),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "Failed to exchange authorization code: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// The OAuth state has successfully completed its purpose.
 	// Delete it so it cannot be reused.
-	err = h.Repo.DeleteOAuthState(
-		r.Context(),
-		state,
-	)
+	err = h.Repo.DeleteOAuthState(r.Context(), state)
 
 	if err != nil {
-		http.Error(
-			w,
-			"Failed to consume OAuth state",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "Failed to consume OAuth state", http.StatusInternalServerError)
 		return
 	}
 
 	// Store the Google OAuth tokens for this LifeMetrics user.
-	err = h.Repo.UpsertHealthConnection(
-		r.Context(),
-		userID,
-		"google_health",
-		"",
-		token.AccessToken,
-		token.RefreshToken,
-		token.Expiry,
-	)
+	err = h.Repo.UpsertHealthConnection(r.Context(), userID, "google_health", "", token.AccessToken, token.RefreshToken, token.Expiry)
 
 	if err != nil {
-		http.Error(
-			w,
-			"Failed to store Google Health connection",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "Failed to store Google Health connection", http.StatusInternalServerError)
 		return
 	}
 
@@ -190,25 +120,14 @@ func (h *Handler) TestTokenHandler(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := auth.GetUserID(r.Context())
 	if err != nil {
-		http.Error(
-			w,
-			"authenticated user not found",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "authenticated user not found", http.StatusUnauthorized)
 		return
 	}
 
-	accessToken, err := h.GetValidAccessToken(
-		r.Context(),
-		userID,
-	)
+	accessToken, err := h.GetValidAccessToken(r.Context(), userID)
 
 	if err != nil {
-		http.Error(
-			w,
-			"failed to get valid access token",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "failed to get valid access token", http.StatusInternalServerError)
 		return
 	}
 
@@ -228,11 +147,7 @@ func (h *Handler) SyncDailyActivity(w http.ResponseWriter, r *http.Request) {
 
 	// Synchronize daily activity data from Google Health.
 	if err := h.SyncDailyActivityData(ctx, userID); err != nil {
-		http.Error(
-			w,
-			fmt.Sprintf("Failed to sync daily activity: %v", err),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, fmt.Sprintf("Failed to sync daily activity: %v", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -272,18 +187,12 @@ func (h *Handler) SyncSleepHandler(
 
 	if err := h.SyncSleepData(r.Context(), userID); err != nil {
 		log.Printf("Google Health sleep sync failed: %v", err)
-		http.Error(
-			w,
-			"Failed to fetch sleep data",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "Failed to fetch sleep data", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	_, _ = w.Write([]byte(
-		`{"message":"Sleep data fetched successfully"}`,
-	))
+	_, _ = w.Write([]byte(`{"message":"Sleep data fetched successfully"}`))
 }

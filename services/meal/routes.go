@@ -34,11 +34,7 @@ func (h *Handler) GetTodayNutrition(w http.ResponseWriter, r *http.Request) {
 	userID, err := auth.GetUserID(r.Context())
 
 	if err != nil {
-		http.Error(
-			w,
-			"unauthorized",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 	var todayMeals []TodayNutrition
@@ -57,11 +53,7 @@ func (h *Handler) GetMealsByDate(w http.ResponseWriter, r *http.Request) {
 	userID, err := auth.GetUserID(r.Context())
 
 	if err != nil {
-		http.Error(
-			w,
-			"unauthorized",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -75,28 +67,17 @@ func (h *Handler) GetMealsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response, err :=
-		h.Repo.GetMealsByDate(
-			r.Context(),
-			userID,
-			date,
-		)
+		h.Repo.GetMealsByDate(r.Context(), userID, date)
 
 	if err != nil {
 
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		return
 	}
 
 	w.Header().
-		Set(
-			"Content-Type",
-			"application/json",
-		)
+		Set("Content-Type", "application/json")
 
 	json.NewEncoder(w).
 		Encode(response)

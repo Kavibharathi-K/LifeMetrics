@@ -38,65 +38,33 @@ func (h *Handler) AddMealItem(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&meal)
 
 	if err != nil {
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusBadRequest,
-		)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	userID, err := auth.GetUserID(r.Context())
 
 	if err != nil {
-		http.Error(
-			w,
-			"unauthorized",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	log.Printf(
-		"MealItem received: %+v\n",
-		meal,
-	)
+	log.Printf("MealItem received: %+v\n", meal)
 
 	today := time.Now().Format("2006-01-02")
 
-	err = h.Repo.AddMealItem(
-		r.Context(),
-		userID,
-		meal.MealType,
-		today,
-		meal.FoodName,
-		meal.Quantity,
-	)
+	err = h.Repo.AddMealItem(r.Context(), userID, meal.MealType, today, meal.FoodName, meal.Quantity)
 
 	if err != nil {
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set(
-		"Content-Type",
-		"application/json",
-	)
+	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusCreated)
 
-	json.NewEncoder(w).Encode(
-		map[string]interface{}{
-			"message":   "Meal item added successfully",
-			"meal_type": meal.MealType,
-			"food_name": meal.FoodName,
-			"quantity":  meal.Quantity,
-		},
-	)
+	json.NewEncoder(w).Encode(map[string]interface{}{"message": "Meal item added successfully", "meal_type": meal.MealType, "food_name": meal.FoodName, "quantity": meal.Quantity})
 }
 
 func (h *Handler) GetMealItem(
@@ -107,32 +75,18 @@ func (h *Handler) GetMealItem(
 	userID, err := auth.GetUserID(r.Context())
 
 	if err != nil {
-		http.Error(
-			w,
-			"unauthorized",
-			http.StatusUnauthorized,
-		)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	items, err := h.Repo.GetMealItems(
-		r.Context(),
-		userID,
-	)
+	items, err := h.Repo.GetMealItems(r.Context(), userID)
 
 	if err != nil {
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set(
-		"Content-Type",
-		"application/json",
-	)
+	w.Header().Set("Content-Type", "application/json")
 
 	json.NewEncoder(w).Encode(items)
 }

@@ -21,11 +21,7 @@ func (h *Handler) GetValidAccessToken(
 	userID int64,
 ) (string, error) {
 
-	connection, err := h.Repo.GetHealthConnection(
-		ctx,
-		userID,
-		"google_health",
-	)
+	connection, err := h.Repo.GetHealthConnection(ctx, userID, "google_health")
 
 	if err != nil {
 		return "", err
@@ -67,15 +63,7 @@ func (h *Handler) GetValidAccessToken(
 		refreshToken = connection.RefreshToken
 	}
 
-	err = h.Repo.UpsertHealthConnection(
-		ctx,
-		userID,
-		"google_health",
-		connection.ProviderUserID,
-		newToken.AccessToken,
-		refreshToken,
-		newToken.Expiry,
-	)
+	err = h.Repo.UpsertHealthConnection(ctx, userID, "google_health", connection.ProviderUserID, newToken.AccessToken, refreshToken, newToken.Expiry)
 
 	if err != nil {
 		return "", err

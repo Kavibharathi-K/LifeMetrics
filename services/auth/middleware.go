@@ -21,22 +21,14 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		authHeader := r.Header.Get("Authorization")
 
 		if authHeader == "" {
-			http.Error(
-				w,
-				"authorization header required",
-				http.StatusUnauthorized,
-			)
+			http.Error(w, "authorization header required", http.StatusUnauthorized)
 			return
 		}
 
 		parts := strings.SplitN(authHeader, " ", 2)
 
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			http.Error(
-				w,
-				"invalid authorization header",
-				http.StatusUnauthorized,
-			)
+			http.Error(w, "invalid authorization header", http.StatusUnauthorized)
 			return
 		}
 
@@ -45,11 +37,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		secret := os.Getenv("LIFEMETRICS_JWT_SECRET")
 
 		if secret == "" {
-			http.Error(
-				w,
-				"authentication configuration error",
-				http.StatusInternalServerError,
-			)
+			http.Error(w, "authentication configuration error", http.StatusInternalServerError)
 			return
 		}
 
@@ -63,54 +51,33 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 				return []byte(secret), nil
 			},
-			jwt.WithValidMethods([]string{
-				jwt.SigningMethodHS256.Alg(),
-			}),
+			jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}),
 		)
 
 		if err != nil || !token.Valid {
-			http.Error(
-				w,
-				"invalid or expired token",
-				http.StatusUnauthorized,
-			)
+			http.Error(w, "invalid or expired token", http.StatusUnauthorized)
 			return
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
 
 		if !ok {
-			http.Error(
-				w,
-				"invalid token claims",
-				http.StatusUnauthorized,
-			)
+			http.Error(w, "invalid token claims", http.StatusUnauthorized)
 			return
 		}
 
 		userIDFloat, ok := claims["user_id"].(float64)
 
 		if !ok {
-			http.Error(
-				w,
-				"invalid user id in token",
-				http.StatusUnauthorized,
-			)
+			http.Error(w, "invalid user id in token", http.StatusUnauthorized)
 			return
 		}
 
 		userID := int64(userIDFloat)
 
-		ctx := context.WithValue(
-			r.Context(),
-			userIDKey,
-			userID,
-		)
+		ctx := context.WithValue(r.Context(), userIDKey, userID)
 
-		next.ServeHTTP(
-			w,
-			r.WithContext(ctx),
-		)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

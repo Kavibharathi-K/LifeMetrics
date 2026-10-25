@@ -41,24 +41,10 @@ func (e *emailService) SendWorkoutEmail(to string, subject string, htmlBody stri
 		from = fmt.Sprintf("%s <%s>", e.fromName, e.fromEmail)
 	}
 
-	message := strings.Join([]string{
-		fmt.Sprintf("From: %s", from),
-		fmt.Sprintf("To: %s", to),
-		fmt.Sprintf("Subject: %s", subject),
-		"MIME-Version: 1.0",
-		`Content-Type: text/html; charset="UTF-8"`,
-		"",
-		htmlBody,
-	}, "\r\n")
+	message := strings.Join([]string{fmt.Sprintf("From: %s", from), fmt.Sprintf("To: %s", to), fmt.Sprintf("Subject: %s", subject), "MIME-Version: 1.0", `Content-Type: text/html; charset="UTF-8"`, "", htmlBody}, "\r\n")
 
 	address := e.host + ":" + e.port
 	auth := smtp.PlainAuth("", e.username, e.password, e.host)
 
-	return smtp.SendMail(
-		address,
-		auth,
-		e.fromEmail,
-		[]string{to},
-		[]byte(message),
-	)
+	return smtp.SendMail(address, auth, e.fromEmail, []string{to}, []byte(message))
 }

@@ -12,11 +12,7 @@ func SearchFoods(query string) ([]FoodSuggestion, error) {
 
 	apiKey := "cjgdjdoOOnoqf9oDNB6mfAag1SbIGAedyFWf3bGa"
 
-	endpoint := fmt.Sprintf(
-		"https://api.nal.usda.gov/fdc/v1/foods/search?query=%s&dataType=Foundation&dataType=SR%%20Legacy&pageSize=10&api_key=%s",
-		url.QueryEscape(query),
-		apiKey,
-	)
+	endpoint := fmt.Sprintf("https://api.nal.usda.gov/fdc/v1/foods/search?query=%s&dataType=Foundation&dataType=SR%%20Legacy&pageSize=10&api_key=%s", url.QueryEscape(query), apiKey)
 
 	resp, err := http.Get(endpoint)
 	if err != nil {

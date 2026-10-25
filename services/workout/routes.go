@@ -42,10 +42,7 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 		r.Put("/schedules/{workout_schedule_id}", handler.UpdateWorkoutSchedule)
 		r.Delete("/schedules/{workout_schedule_id}", handler.DeleteWorkoutSchedule)
 
-		r.Post(
-			"/schedules/{workout_schedule_id}/exercises",
-			handler.CreateWorkoutScheduleExercise,
-		)
+		r.Post("/schedules/{workout_schedule_id}/exercises", handler.CreateWorkoutScheduleExercise)
 	})
 }
 
@@ -60,10 +57,7 @@ func (h *Handler) GetWorkoutEmailSettings(
 	}
 	userID := int(userID64)
 
-	settings, err := h.Repo.GetWorkoutEmailSettings(
-		r.Context(),
-		userID,
-	)
+	settings, err := h.Repo.GetWorkoutEmailSettings(r.Context(), userID)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		writeJSON(w, http.StatusOK, WorkoutEmailSettings{})
@@ -71,11 +65,7 @@ func (h *Handler) GetWorkoutEmailSettings(
 	}
 
 	if err != nil {
-		writeError(
-			w,
-			http.StatusInternalServerError,
-			"failed to get workout email settings",
-		)
+		writeError(w, http.StatusInternalServerError, "failed to get workout email settings")
 		return
 	}
 
@@ -103,10 +93,7 @@ func (h *Handler) UpdateWorkoutEmailSettings(
 	request.Email = strings.TrimSpace(request.Email)
 	request.EmailTime = strings.TrimSpace(request.EmailTime)
 
-	if err := validateWorkoutEmailSettings(
-		request.Email,
-		request.EmailTime,
-	); err != nil {
+	if err := validateWorkoutEmailSettings(request.Email, request.EmailTime); err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -116,16 +103,8 @@ func (h *Handler) UpdateWorkoutEmailSettings(
 		EmailTime: request.EmailTime,
 	}
 
-	if err := h.Repo.UpdateWorkoutEmailSettings(
-		r.Context(),
-		userID,
-		&settings,
-	); err != nil {
-		writeError(
-			w,
-			http.StatusInternalServerError,
-			"failed to update workout email settings",
-		)
+	if err := h.Repo.UpdateWorkoutEmailSettings(r.Context(), userID, &settings); err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to update workout email settings")
 		return
 	}
 
@@ -144,17 +123,10 @@ func (h *Handler) ListWorkoutSchedules(
 	}
 	userID := int(userID64)
 
-	schedules, err := h.Repo.ListWorkoutSchedules(
-		r.Context(),
-		userID,
-	)
+	schedules, err := h.Repo.ListWorkoutSchedules(r.Context(), userID)
 
 	if err != nil {
-		writeError(
-			w,
-			http.StatusInternalServerError,
-			"failed to list workouts",
-		)
+		writeError(w, http.StatusInternalServerError, "failed to list workouts")
 		return
 	}
 
@@ -173,40 +145,22 @@ func (h *Handler) GetWorkoutScheduleByDay(
 	}
 	userID := int(userID64)
 
-	dayOfWeek, err := strconv.Atoi(
-		chi.URLParam(r, "day_of_week"),
-	)
+	dayOfWeek, err := strconv.Atoi(chi.URLParam(r, "day_of_week"))
 
 	if err != nil || dayOfWeek < 1 || dayOfWeek > 7 {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"day_of_week must be between 1 and 7",
-		)
+		writeError(w, http.StatusBadRequest, "day_of_week must be between 1 and 7")
 		return
 	}
 
-	schedule, err := h.Repo.GetWorkoutScheduleByDay(
-		r.Context(),
-		userID,
-		dayOfWeek,
-	)
+	schedule, err := h.Repo.GetWorkoutScheduleByDay(r.Context(), userID, dayOfWeek)
 
 	if errors.Is(err, pgx.ErrNoRows) {
-		writeError(
-			w,
-			http.StatusNotFound,
-			"workout schedule not found",
-		)
+		writeError(w, http.StatusNotFound, "workout schedule not found")
 		return
 	}
 
 	if err != nil {
-		writeError(
-			w,
-			http.StatusInternalServerError,
-			"failed to get workout",
-		)
+		writeError(w, http.StatusInternalServerError, "failed to get workout")
 		return
 	}
 
@@ -235,20 +189,12 @@ func (h *Handler) CreateWorkoutSchedule(
 	request.WorkoutName = strings.TrimSpace(request.WorkoutName)
 
 	if request.DayOfWeek < 1 || request.DayOfWeek > 7 {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"day_of_week must be between 1 and 7",
-		)
+		writeError(w, http.StatusBadRequest, "day_of_week must be between 1 and 7")
 		return
 	}
 
 	if request.WorkoutName == "" {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"workout_name is required",
-		)
+		writeError(w, http.StatusBadRequest, "workout_name is required")
 		return
 	}
 
@@ -256,11 +202,7 @@ func (h *Handler) CreateWorkoutSchedule(
 		request.Exercises[index] = strings.TrimSpace(exercise)
 
 		if request.Exercises[index] == "" {
-			writeError(
-				w,
-				http.StatusBadRequest,
-				"exercise names cannot be empty",
-			)
+			writeError(w, http.StatusBadRequest, "exercise names cannot be empty")
 			return
 		}
 	}
@@ -270,26 +212,12 @@ func (h *Handler) CreateWorkoutSchedule(
 		WorkoutName: request.WorkoutName,
 	}
 
-	if err := h.Repo.CreateWorkoutSchedule(
-		r.Context(),
-		userID,
-		&schedule,
-		request.Exercises,
-	); err != nil {
+	if err := h.Repo.CreateWorkoutSchedule(r.Context(), userID, &schedule, request.Exercises); err != nil {
 		writeDatabaseError(w, err)
 		return
 	}
 
-	writeJSON(
-		w,
-		http.StatusCreated,
-		CreateWorkoutScheduleResponse{
-			WorkoutScheduleId: schedule.WorkoutScheduleId,
-			DayOfWeek:         schedule.DayOfWeek,
-			WorkoutName:       schedule.WorkoutName,
-			Exercises:         request.Exercises,
-		},
-	)
+	writeJSON(w, http.StatusCreated, CreateWorkoutScheduleResponse{WorkoutScheduleId: schedule.WorkoutScheduleId, DayOfWeek: schedule.DayOfWeek, WorkoutName: schedule.WorkoutName, Exercises: request.Exercises})
 }
 
 // Update workout schedule for the day.
@@ -304,16 +232,10 @@ func (h *Handler) UpdateWorkoutSchedule(
 	}
 	userID := int(userID64)
 
-	scheduleID, err := strconv.Atoi(
-		chi.URLParam(r, "workout_schedule_id"),
-	)
+	scheduleID, err := strconv.Atoi(chi.URLParam(r, "workout_schedule_id"))
 
 	if err != nil || scheduleID < 1 {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"invalid workout_schedule_id",
-		)
+		writeError(w, http.StatusBadRequest, "invalid workout_schedule_id")
 		return
 	}
 
@@ -327,20 +249,12 @@ func (h *Handler) UpdateWorkoutSchedule(
 	request.WorkoutName = strings.TrimSpace(request.WorkoutName)
 
 	if request.DayOfWeek < 1 || request.DayOfWeek > 7 {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"day_of_week must be between 1 and 7",
-		)
+		writeError(w, http.StatusBadRequest, "day_of_week must be between 1 and 7")
 		return
 	}
 
 	if request.WorkoutName == "" {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"workout_name is required",
-		)
+		writeError(w, http.StatusBadRequest, "workout_name is required")
 		return
 	}
 
@@ -348,11 +262,7 @@ func (h *Handler) UpdateWorkoutSchedule(
 		request.Exercises[index] = strings.TrimSpace(exercise)
 
 		if request.Exercises[index] == "" {
-			writeError(
-				w,
-				http.StatusBadRequest,
-				"exercise names cannot be empty",
-			)
+			writeError(w, http.StatusBadRequest, "exercise names cannot be empty")
 			return
 		}
 	}
@@ -363,40 +273,21 @@ func (h *Handler) UpdateWorkoutSchedule(
 		WorkoutName:       request.WorkoutName,
 	}
 
-	if err := h.Repo.UpdateWorkoutSchedule(
-		r.Context(),
-		userID,
-		&schedule,
-		request.Exercises,
-	); err != nil {
+	if err := h.Repo.UpdateWorkoutSchedule(r.Context(), userID, &schedule, request.Exercises); err != nil {
 		writeDatabaseError(w, err)
 		return
 	}
 
-	writeJSON(
-		w,
-		http.StatusOK,
-		UpdateWorkoutScheduleResponse{
-			WorkoutScheduleId: schedule.WorkoutScheduleId,
-			DayOfWeek:         schedule.DayOfWeek,
-			WorkoutName:       schedule.WorkoutName,
-			Exercises:         request.Exercises,
-		},
-	)
+	writeJSON(w, http.StatusOK, UpdateWorkoutScheduleResponse{WorkoutScheduleId: schedule.WorkoutScheduleId, DayOfWeek: schedule.DayOfWeek, WorkoutName: schedule.WorkoutName, Exercises: request.Exercises})
 }
 
-func validateWorkoutEmailSettings(
-	email string,
-	emailTime string,
-) error {
+func validateWorkoutEmailSettings(email string, emailTime string) error {
 	if email == "" && emailTime == "" {
 		return nil
 	}
 
 	if email == "" || emailTime == "" {
-		return errors.New(
-			"email and email_time must be provided together",
-		)
+		return errors.New("email and email_time must be provided together")
 	}
 
 	if _, err := mail.ParseAddress(email); err != nil {
@@ -422,40 +313,22 @@ func (h *Handler) DeleteWorkoutSchedule(
 	}
 	userID := int(userID64)
 
-	scheduleID, err := strconv.Atoi(
-		chi.URLParam(r, "workout_schedule_id"),
-	)
+	scheduleID, err := strconv.Atoi(chi.URLParam(r, "workout_schedule_id"))
 
 	if err != nil || scheduleID < 1 {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"invalid workout_schedule_id",
-		)
+		writeError(w, http.StatusBadRequest, "invalid workout_schedule_id")
 		return
 	}
 
-	deleted, err := h.Repo.DeleteWorkoutSchedule(
-		r.Context(),
-		userID,
-		scheduleID,
-	)
+	deleted, err := h.Repo.DeleteWorkoutSchedule(r.Context(), userID, scheduleID)
 
 	if err != nil {
-		writeError(
-			w,
-			http.StatusInternalServerError,
-			"failed to delete workout",
-		)
+		writeError(w, http.StatusInternalServerError, "failed to delete workout")
 		return
 	}
 
 	if !deleted {
-		writeError(
-			w,
-			http.StatusNotFound,
-			"workout schedule not found",
-		)
+		writeError(w, http.StatusNotFound, "workout schedule not found")
 		return
 	}
 
@@ -474,16 +347,10 @@ func (h *Handler) CreateWorkoutScheduleExercise(
 	}
 	userID := int(userID64)
 
-	scheduleID, err := strconv.Atoi(
-		chi.URLParam(r, "workout_schedule_id"),
-	)
+	scheduleID, err := strconv.Atoi(chi.URLParam(r, "workout_schedule_id"))
 
 	if err != nil || scheduleID < 1 {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"invalid workout_schedule_id",
-		)
+		writeError(w, http.StatusBadRequest, "invalid workout_schedule_id")
 		return
 	}
 
@@ -497,20 +364,12 @@ func (h *Handler) CreateWorkoutScheduleExercise(
 	request.ExerciseName = strings.TrimSpace(request.ExerciseName)
 
 	if request.ExerciseName == "" {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"exercise_name is required",
-		)
+		writeError(w, http.StatusBadRequest, "exercise_name is required")
 		return
 	}
 
 	if request.ExerciseOrder < 0 {
-		writeError(
-			w,
-			http.StatusBadRequest,
-			"exercise_order cannot be negative",
-		)
+		writeError(w, http.StatusBadRequest, "exercise_order cannot be negative")
 		return
 	}
 
@@ -520,91 +379,42 @@ func (h *Handler) CreateWorkoutScheduleExercise(
 		ExerciseOrder:     request.ExerciseOrder,
 	}
 
-	if err := h.Repo.CreateWorkoutScheduleExercise(
-		r.Context(),
-		userID,
-		&exercise,
-	); err != nil {
+	if err := h.Repo.CreateWorkoutScheduleExercise(r.Context(), userID, &exercise); err != nil {
 		writeDatabaseError(w, err)
 		return
 	}
 
-	writeJSON(
-		w,
-		http.StatusCreated,
-		CreateWorkoutScheduleExerciseResponse{
-			WorkoutScheduleExerciseId: exercise.WorkoutScheduleExerciseId,
-			WorkoutScheduleId:         exercise.WorkoutScheduleId,
-			ExerciseName:              exercise.ExerciseName,
-			ExerciseOrder:             exercise.ExerciseOrder,
-		},
-	)
+	writeJSON(w, http.StatusCreated, CreateWorkoutScheduleExerciseResponse{WorkoutScheduleExerciseId: exercise.WorkoutScheduleExerciseId, WorkoutScheduleId: exercise.WorkoutScheduleId, ExerciseName: exercise.ExerciseName, ExerciseOrder: exercise.ExerciseOrder})
 }
 
-func writeDatabaseError(
-	w http.ResponseWriter,
-	err error,
-) {
+func writeDatabaseError(w http.ResponseWriter, err error) {
 	var pgErr *pgconn.PgError
 
 	if errors.As(err, &pgErr) {
 		switch pgErr.Code {
 		case "23505":
-			writeError(
-				w,
-				http.StatusConflict,
-				"a workout or exercise already uses that day or order",
-			)
+			writeError(w, http.StatusConflict, "a workout or exercise already uses that day or order")
 			return
 
 		case "P0002":
-			writeError(
-				w,
-				http.StatusNotFound,
-				"workout schedule not found",
-			)
+			writeError(w, http.StatusNotFound, "workout schedule not found")
 			return
 
 		case "23514":
-			writeError(
-				w,
-				http.StatusBadRequest,
-				"workout data is invalid",
-			)
+			writeError(w, http.StatusBadRequest, "workout data is invalid")
 			return
 		}
 	}
 
-	writeError(
-		w,
-		http.StatusInternalServerError,
-		"workout database operation failed",
-	)
+	writeError(w, http.StatusInternalServerError, "workout database operation failed")
 }
 
-func writeError(
-	w http.ResponseWriter,
-	status int,
-	message string,
-) {
-	writeJSON(
-		w,
-		status,
-		map[string]string{
-			"error": message,
-		},
-	)
+func writeError(w http.ResponseWriter, status int, message string) {
+	writeJSON(w, status, map[string]string{"error": message})
 }
 
-func writeJSON(
-	w http.ResponseWriter,
-	status int,
-	value any,
-) {
-	w.Header().Set(
-		"Content-Type",
-		"application/json",
-	)
+func writeJSON(w http.ResponseWriter, status int, value any) {
+	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(status)
 

@@ -36,26 +36,7 @@ func (r *Repository) CreateUserMetrics(
 
 	var id int
 
-	err := r.DB.QueryRow(
-		ctx,
-		query,
-
-		m.UserId,
-
-		m.Age,
-		m.Gender,
-
-		m.HeightCm,
-		m.WeightKg,
-
-		m.ActivityLevel,
-
-		m.MaintenanceCalories,
-
-		m.ProteinGoal,
-		m.CarbGoal,
-		m.FatGoal,
-	).Scan(&id)
+	err := r.DB.QueryRow(ctx, query, m.UserId, m.Age, m.Gender, m.HeightCm, m.WeightKg, m.ActivityLevel, m.MaintenanceCalories, m.ProteinGoal, m.CarbGoal, m.FatGoal).Scan(&id)
 
 	return id, err
 }
@@ -72,30 +53,7 @@ func (r *Repository) GetLatestUserMetrics(
 		FROM usermetrics_getlatest($1)
 	`
 
-	err := r.DB.QueryRow(
-		ctx,
-		query,
-		userID,
-	).Scan(
-		&m.Id,
-		&m.UserId,
-
-		&m.Age,
-		&m.Gender,
-
-		&m.HeightCm,
-		&m.WeightKg,
-
-		&m.ActivityLevel,
-
-		&m.MaintenanceCalories,
-
-		&m.ProteinGoal,
-		&m.CarbGoal,
-		&m.FatGoal,
-
-		&m.CreatedAt,
-	)
+	err := r.DB.QueryRow(ctx, query, userID).Scan(&m.Id, &m.UserId, &m.Age, &m.Gender, &m.HeightCm, &m.WeightKg, &m.ActivityLevel, &m.MaintenanceCalories, &m.ProteinGoal, &m.CarbGoal, &m.FatGoal, &m.CreatedAt)
 
 	return m, err
 }
