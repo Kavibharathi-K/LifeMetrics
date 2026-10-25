@@ -17,3 +17,9 @@ stop:
 restart:
 	make stop
 	make run
+
+
+.PHONY: format-go
+
+format-go:
+	go run ./tools/formatgo .
