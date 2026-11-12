@@ -1,6 +1,8 @@
 package health
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,6 +10,7 @@ import (
 
 	"github.com/Kavibharathi-K/lifemetrics/services/auth"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"golang.org/x/oauth2"
 )
 
@@ -195,4 +198,40 @@ func (h *Handler) SyncSleepHandler(
 	w.WriteHeader(http.StatusOK)
 
 	_, _ = w.Write([]byte(`{"message":"Sleep data fetched successfully"}`))
+}
+
+func (h *Handler) GoogleConnectionStatusHandler(w http.ResponseWriter, r *http.Request) {
+	userID, err := auth.GetUserID(r.Context())
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	connection, err := h.Repo.GetHealthConnection(r.Context(), userID, "google_health")
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"connected":false,"provider":"google_health"}`))
+			return
+		}
+
+		log.Printf("Failed to get Google Health connection: %v", err)
+		http.Error(w, "Failed to get connection status", http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]interface{}{
+		"connected":        true,
+		"provider":         "google_health",
+		"provider_user_id": connection.ProviderUserID,
+		"expires_at":       connection.ExpiresAt,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("Failed to encode connection status response: %v", err)
+	}
 }

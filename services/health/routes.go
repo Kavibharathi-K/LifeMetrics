@@ -22,15 +22,11 @@ func RegisterRoutes(r chi.Router, db *pgxpool.Pool) {
 	r.Route("/health/google", func(r chi.Router) {
 
 		r.With(auth.AuthMiddleware).Get("/connect", handler.GoogleConnectHandler)
-
 		r.Get("/callback", handler.GoogleCallbackHandler)
-
 		r.With(auth.AuthMiddleware).Get("/test-token", handler.TestTokenHandler)
-
 		r.With(auth.AuthMiddleware).Post("/sync-daily-activity", handler.SyncDailyActivity)
-
 		r.With(auth.AuthMiddleware).Post("/sync-daily-vitals", handler.SyncDailyVitalsHandler)
-
 		r.With(auth.AuthMiddleware).Post("/sync-sleep", handler.SyncSleepHandler)
+		r.With(auth.AuthMiddleware).Get("/connection", handler.GoogleConnectionStatusHandler)
 	})
 }
